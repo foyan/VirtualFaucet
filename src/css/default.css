@@ -5,6 +5,13 @@ body {
 #vf {
 	width: 500px;
 	height: 500px;
+}
+
+
+#play {
+	width: 500px;
 	border: 1px solid #cccccc;
 	border-radius: 10px;
+	text-align: center;
+	padding-top: 10px;
 }

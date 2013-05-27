@@ -11,9 +11,14 @@ function App() {
 	
 	this.context = self.canvas.getContext("2d");
 	
-	this.volume = 1600;
+	this.volume = 0;
 	
 	this.integrator = new RungeKuttaIntegrator();
+	
+	this.tap = function() {
+		self.volume += 100;
+		self.paint();
+	}
 	
 	this.paintFunnel = function (ctx, cx, cy, H, r, draw) {
 		ctx.beginPath();
@@ -73,6 +78,8 @@ function App() {
 $(function () {
 	var app = new App();
 	app.paint();
+	
+	ko.applyBindings(app);
 })
 
 
