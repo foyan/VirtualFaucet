@@ -11,38 +11,41 @@ function App() {
 	
 	this.context = self.canvas.getContext("2d");
 	
+	this.volume = 65;
+	
+	this.paintBorder = function (ctx, cx, cy, tp, bp, H, v) {
+		ctx.beginPath();
+		
+		ctx.moveTo(cx - tp / 2, cy - H / 2);
+		ctx.lineTo(cx + tp / 2, cy - H / 2);
+		
+		for (var h = H - 1; h > 0; --h) {
+			var peri = v(h);
+			ctx.lineTo(cx + peri / 2, cy + H / 2 - h);
+		}
+		
+		ctx.lineTo(cx + bp / 2, cy + H / 2);
+		ctx.lineTo(cx - bp / 2, cy + H / 2);
+
+		for (var h = 1; h < H; h++) {
+			var peri = v(h);
+			ctx.lineTo(cx - peri / 2, cy + H / 2 - h);
+		}
+
+		ctx.lineTo(cx - tp / 2, cy - H / 2);
+
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "white";
+		ctx.stroke();		
+	}
+
 	this.paint = function () {
 		
 		var centerX = self.canvasWidth / 2;
 		var centerY = self.canvasHeight / 2;
-		
-		console.log("center: (" + centerX + ", " + centerY + ")");
-		
-		self.context.beginPath();
-		
-		self.context.moveTo(centerX - self.funnel.topPerimeter() / 2, centerY - self.funnel.height() / 2);
-		self.context.lineTo(centerX + self.funnel.topPerimeter() / 2, centerY - self.funnel.height() / 2);
-		
-		for (var h = self.funnel.height() - 1; h > 0; --h) {
-			var peri = self.funnel.getVolume(h);
-			self.context.lineTo(centerX + peri / 2, centerY + self.funnel.height() / 2 - h);
-		}
-		
-		self.context.lineTo(centerX + self.funnel.bottomPerimeter() / 2, centerY + self.funnel.height() / 2);
-		self.context.lineTo(centerX - self.funnel.bottomPerimeter() / 2, centerY + self.funnel.height() / 2);
-
-		for (var h = 1; h < self.funnel.height(); h++) {
-			var peri = self.funnel.getVolume(h);
-			self.context.lineTo(centerX - peri / 2, centerY + self.funnel.height() / 2 - h);
-		}
-
-		self.context.lineTo(centerX - self.funnel.topPerimeter() / 2, centerY - self.funnel.height() / 2);
-
-		self.context.lineWidth = 1;
-		self.context.strokeStyle = "white";
-		
-		self.context.stroke();
 				
+		self.paintBorder(self.context, centerX, centerY, self.funnel.topPerimeter(), self.funnel.bottomPerimeter(), self.funnel.height(), self.funnel.getVolume);
+		
 	};
 	
 }
