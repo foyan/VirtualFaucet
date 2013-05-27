@@ -12,7 +12,8 @@ function Funnel() {
 		if (h <= 30) {
 			return 5;
 		}
-		return 5 + (h-30) * 0.5;
+		return 5 + (h-30)*(h-30)*(h-30) * 0.00004 + (h-30)*(h-30) * 0.0002;
+		//return 5 * (h-30) + Math.sin(h-30) * (h-30) * 1;
 	}
 		
 }
