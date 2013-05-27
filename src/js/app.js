@@ -73,6 +73,16 @@ function App() {
 				
 	};
 	
+	this.dt = 0.1;
+	
+	this.start = function () {
+		window.setTimeout(self.play, 1000 * self.dt);
+	}
+	
+	this.play = function () {
+		console.log("ksdjf");
+	}
+	
 }
 
 $(function () {
@@ -80,6 +90,8 @@ $(function () {
 	app.paint();
 	
 	ko.applyBindings(app);
+	
+	app.start();
 })
 
 
