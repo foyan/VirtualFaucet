@@ -16,7 +16,7 @@ function App() {
 	this.integrator = new RungeKuttaIntegrator();
 	
 	this.tap = function() {
-		self.volume += 100;
+		self.volume += 200;
 		self.paint();
 	}
 	
@@ -48,11 +48,9 @@ function App() {
 		
 	}
 	
-	this.paint = function () {
-		
-		var cx = self.canvasWidth / 2;
-		var cy = self.canvasHeight / 2 + self.funnel.height() / 2;
-			
+	this.fillHeight = 0;
+	
+	this.calculateFillHeight = function () {
 		var fillHeight = 0;
 		
 		var vol = 0;
@@ -61,11 +59,20 @@ function App() {
 			fillHeight++;
 		}
 		
-
+		self.fillHeight = fillHeight;		
+	}
+	
+	this.paint = function () {
+		
+		self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
+		
+		var cx = self.canvasWidth / 2;
+		var cy = self.canvasHeight / 2 + self.funnel.height() / 2;
+			
 		self.context.lineWidth = 0;
 		self.context.strokeStyle = "none";
 		self.context.fillStyle = "blue";
-		self.paintFunnel(self.context, cx, cy, fillHeight, self.funnel.radius, self.context.fill);
+		self.paintFunnel(self.context, cx, cy, self.fillHeight, self.funnel.radius, self.context.fill);
 
 		self.context.lineWidth = 2;
 		self.context.strokeStyle = "white";
@@ -74,13 +81,33 @@ function App() {
 	};
 	
 	this.dt = 0.1;
+
+	this.looper = null;
+	
+	this.outflowVelocity = 0;
 	
 	this.start = function () {
-		window.setTimeout(self.play, 1000 * self.dt);
+		self.looper = setInterval(self.play, 1000 * self.dt);
+	}
+	
+	this.stop = function () {
+		clearInterval(self.looper);
+		self.looper = null;
+	}
+	
+	this.flowOut = function () {
+		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight) * 0.1;
+		
+		self.volume -= Math.max(0, 2 * self.funnel.radius(0) * self.outflowVelocity);
 	}
 	
 	this.play = function () {
-		console.log("ksdjf");
+		
+		self.calculateFillHeight();
+		self.flowOut();
+		self.calculateFillHeight();
+		
+		self.paint();
 	}
 	
 }
