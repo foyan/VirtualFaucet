@@ -1,5 +1,16 @@
 body {
 	background-color: black;
+	color: white;
+	font-family: Consolas;
+	padding: 0;
+	margin: 0;
+}
+
+.box {
+	border: 1px solid #cccccc;
+	border-radius: 10px;
+	padding: 10px;
+	margin: 5px;	
 }
 
 #vf {
@@ -10,8 +21,9 @@ body {
 
 #play {
 	width: 500px;
-	border: 1px solid #cccccc;
-	border-radius: 10px;
-	text-align: center;
-	padding-top: 10px;
+}
+
+.coolResult, .title {
+	/*font-weight: bold;*/
+	font-size: 20pt;
 }

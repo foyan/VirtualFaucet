@@ -20,12 +20,26 @@
 	
 	<body>
 		
-		<div id="play">
+		<div class="box title">
+			Virtual Fauceteering
+		</div>
+		
+		<div id="play" class="box">
 			
-			<a href="#" data-bind="click: tap"><img src="assets/faucet.png" style="margin-left: -130px;" /></a>
+			<a href="#" data-bind="click: tap" style="display:inline-block;margin-left:100px;"><img src="assets/faucet.png"/></a>
+			<div style="float:right;">
+			<textarea data-bind="value: message" >
+				Post something to the faucet...
+			</textarea>
+			<br/>
+			<input type="button" value="Post" data-bind="click: encode" />
+			</div>
 			
 			<canvas id="vf" width="500" height="500">
 			</canvas>
+			
+			<div class="coolResult" data-bind="text: formattedOutflowVelocity">
+			</div>
 
 		</div>
 					

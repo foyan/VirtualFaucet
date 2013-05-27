@@ -62,6 +62,14 @@ function App() {
 		self.fillHeight = fillHeight;		
 	}
 	
+	this.paintOutflow = function (cx, cy, ctx, r0) {
+		if (self.outflowVelocity > 0) {
+			ctx.strokeStyle = "none";
+			ctx.fillStyle = "blue";
+			ctx.fillRect(cx - r0, cy, 2 * r0, self.canvas.height - cy);
+		}
+	}
+	
 	this.paint = function () {
 		
 		self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
@@ -74,10 +82,12 @@ function App() {
 		self.context.fillStyle = "blue";
 		self.paintFunnel(self.context, cx, cy, self.fillHeight, self.funnel.radius, self.context.fill);
 
+		self.paintOutflow(cx, cy, self.context, self.funnel.radius(0));
+
 		self.context.lineWidth = 2;
 		self.context.strokeStyle = "white";
 		self.paintFunnel(self.context, cx, cy, self.funnel.height(), self.funnel.radius, self.context.stroke);
-				
+		
 	};
 	
 	this.dt = 0.1;
@@ -85,6 +95,7 @@ function App() {
 	this.looper = null;
 	
 	this.outflowVelocity = 0;
+	this.formattedOutflowVelocity = ko.observable("0.000 m/s");
 	
 	this.start = function () {
 		self.looper = setInterval(self.play, 1000 * self.dt);
@@ -96,19 +107,45 @@ function App() {
 	}
 	
 	this.flowOut = function () {
-		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight) * 0.1;
-		
-		self.volume -= Math.max(0, 2 * self.funnel.radius(0) * self.outflowVelocity);
+		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight) * 0.2;
+		self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity);
 	}
 	
+	this.playCount = 0;
+	
 	this.play = function () {
+		
+		if (self.encodedMessage.length > 0) {
+			if (self.encodedMessage[0] == "1") {
+				self.tap();
+			}
+			self.encodedMessage = self.encodedMessage.substr(1);
+		}
 		
 		self.calculateFillHeight();
 		self.flowOut();
 		self.calculateFillHeight();
 		
 		self.paint();
+		
+		if (self.playCount % 2 == 0) {
+			self.formattedOutflowVelocity((self.outflowVelocity*5).toFixed(3) + " m/s");
+		}
+		
+		self.playCount++;
 	}
+	
+	this.message = ko.observable("Type something gangsta");
+	
+	this.encode = function () {
+		var enc = "";
+		for (var i = 0; i < self.message().length; i++) {
+			enc += self.message().charCodeAt(i).toString(2);
+		}
+		self.encodedMessage = enc;
+	}
+	
+	this.encodedMessage = "";
 	
 }
 
