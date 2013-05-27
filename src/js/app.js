@@ -11,28 +11,33 @@ function App() {
 	
 	this.context = self.canvas.getContext("2d");
 	
-	this.volume = 65;
+	this.volume = 15500;
 	
-	this.paintBorder = function (ctx, cx, cy, tp, bp, H, v) {
+	this.integrator = new RungeKuttaIntegrator();
+	
+	this.paintBorder = function (ctx, cx, cy, H, r) {
 		ctx.beginPath();
 		
-		ctx.moveTo(cx - tp / 2, cy - H / 2);
-		ctx.lineTo(cx + tp / 2, cy - H / 2);
+		var rh1 = r(H);
+		var rh0 = r(0);
+		
+		ctx.moveTo(cx - rh1, cy - H / 2);
+		ctx.lineTo(cx + rh1, cy - H / 2);
 		
 		for (var h = H - 1; h > 0; --h) {
-			var peri = v(h);
-			ctx.lineTo(cx + peri / 2, cy + H / 2 - h);
+			var rh = r(h);
+			ctx.lineTo(cx + rh, cy + H / 2 - h);
 		}
 		
-		ctx.lineTo(cx + bp / 2, cy + H / 2);
-		ctx.lineTo(cx - bp / 2, cy + H / 2);
+		ctx.lineTo(cx + rh0, cy + H / 2);
+		ctx.lineTo(cx - rh0, cy + H / 2);
 
 		for (var h = 1; h < H; h++) {
-			var peri = v(h);
-			ctx.lineTo(cx - peri / 2, cy + H / 2 - h);
+			var rh = r(h);
+			ctx.lineTo(cx - rh, cy + H / 2 - h);
 		}
 
-		ctx.lineTo(cx - tp / 2, cy - H / 2);
+		ctx.lineTo(cx - rh1, cy - H / 2);
 
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "white";
@@ -41,10 +46,14 @@ function App() {
 
 	this.paint = function () {
 		
-		var centerX = self.canvasWidth / 2;
-		var centerY = self.canvasHeight / 2;
+		var cx = self.canvasWidth / 2;
+		var cy = self.canvasHeight / 2;
 				
-		self.paintBorder(self.context, centerX, centerY, self.funnel.topPerimeter(), self.funnel.bottomPerimeter(), self.funnel.height(), self.funnel.getVolume);
+		self.paintBorder(self.context, cx, cy, self.funnel.height(), self.funnel.radius);
+		
+		//var fillHeight = self.integrator.integrate(0, );
+		
+		//console.log(fillHeight);
 		
 	};
 	
