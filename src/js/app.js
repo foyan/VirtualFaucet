@@ -11,7 +11,7 @@ function App() {
 	
 	this.context = self.canvas.getContext("2d");
 	
-	this.volume = 15500;
+	this.volume = 1600;
 	
 	this.integrator = new RungeKuttaIntegrator();
 	
@@ -48,8 +48,14 @@ function App() {
 		var cx = self.canvasWidth / 2;
 		var cy = self.canvasHeight / 2 + self.funnel.height() / 2;
 			
-		var fillHeight = self.funnel.height() / 2;
-		//var fillHeight = self.integrator.integrate(0, );
+		var fillHeight = 0;
+		
+		var vol = 0;
+		while (vol < self.volume) {
+			vol = self.integrator.integrate(vol, fillHeight, self.funnel.radius, fillHeight + 1);
+			fillHeight++;
+		}
+		
 
 		self.context.lineWidth = 0;
 		self.context.strokeStyle = "none";
@@ -59,10 +65,7 @@ function App() {
 		self.context.lineWidth = 2;
 		self.context.strokeStyle = "white";
 		self.paintFunnel(self.context, cx, cy, self.funnel.height(), self.funnel.radius, self.context.stroke);
-		
-		
-		//console.log(fillHeight);
-		
+				
 	};
 	
 }
