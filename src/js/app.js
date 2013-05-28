@@ -2,6 +2,8 @@ function App() {
 	
 	var self = this;
 	
+	this.chartSource = null;
+	
 	this.funnel = new Funnel();
 	
 	this.canvas = $("#vf").get(0);
@@ -155,6 +157,12 @@ function App() {
 			self.formattedOutflowVelocity((self.outflowVelocity*5).toFixed(3) + " m/s");
 		}
 		
+		self.chartSource.add(self.playCount, self.outflowVelocity);
+		
+		if (self.playCount % 5 == 0) {
+			self.chartSource.draw();
+		}
+		
 		self.playCount++;
 	}
 	
@@ -176,15 +184,16 @@ $(function () {
 	var app = new App();
 	app.paint();
 	
+	var cs = new ChartSource();
+	app.chartSource = cs;
+	cs.init("graph");
+	
 	ko.applyBindings(app);
 	
 	app.start();
 	
-// Creates canvas 640 × 480 at 10, 50
-var r = Raphael("graph");
-// Creates pie chart at with center at 320, 200,
-// radius 100 and data: [55, 20, 13, 32, 5, 1, 2]
-r.linechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
+	console.log(app);
+	
 
 })
 

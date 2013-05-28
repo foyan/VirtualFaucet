@@ -24,6 +24,9 @@ body {
 }
 
 .coolResult, .title {
-	/*font-weight: bold;*/
 	font-size: 20pt;
+}
+
+#graph {
+	height: 500px;
 }
