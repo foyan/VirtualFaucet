@@ -8,6 +8,16 @@ function ChartSource(dt) {
 	this.h = [];
 	this.V = [];
 	
+	this.plainText = [];
+	
+	var pt = "";
+	for (var i = 0; i < 200; i++) {
+		pt += ".\u200B";
+	}
+	for (var i = 0; i < 8; i++) {
+		this.plainText[i] = ko.observable(pt);
+	}
+	
 	for (var i = -1000 * dt; i < 0; i += 0.1) {
 		this.x.push(i);
 		this.v.push(0);
@@ -26,6 +36,10 @@ function ChartSource(dt) {
 		self.r = Raphael(container);   
 	}
 	
+	this.currentByte = 0;
+	
+	this.prevV = 0;
+	
 	this.add = function (x, v) {
 		var h = v * v / 2.0 / 9.81;
 		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2 / 100.0;
@@ -40,6 +54,14 @@ function ChartSource(dt) {
 		self.v.shift();
 		self.h.shift();
 		self.V.shift();
+		
+		var bit = V > self.prevV ? 1 : 0;
+		self.prevV = V;
+		
+		self.currentByte = ((self.currentByte << 1) + bit) & 255;
+		var ch = self.currentByte > 31 ? String.fromCharCode(self.currentByte) : ".";
+		self.plainText[x % 8](self.plainText[x % 8]().substr(2) + ch + "\u200B");
+		
 	}
 	
 	this.draw = function () {

@@ -29,7 +29,7 @@
 			<tr>
 				<td colspan="2">
 					<div class="box title">
-						Virtual Fauceteering
+						Virtual Fauceteering - <a href="#" data-bind="click: stop">[Stop]</a>
 					</div>
 				</td>
 			</tr>
@@ -56,7 +56,18 @@
 					</div>
 				</td>
 				<td>
-					<div class="box" id="graph" style="width:95%;">
+					<div class="box">
+						<div data-bind="text: chartSource.plainText[0]"></div>
+						<div data-bind="text: chartSource.plainText[1]"></div>
+						<div data-bind="text: chartSource.plainText[2]"></div>
+						<div data-bind="text: chartSource.plainText[3]"></div>
+						<div data-bind="text: chartSource.plainText[4]"></div>
+						<div data-bind="text: chartSource.plainText[5]"></div>
+						<div data-bind="text: chartSource.plainText[6]"></div>
+						<div data-bind="text: chartSource.plainText[7]"></div>
+						
+						<div id="graph" style="width:95%;">
+						</div>
 					</div>
 				</td>
 			</tr>

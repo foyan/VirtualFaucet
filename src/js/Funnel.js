@@ -14,7 +14,8 @@ function Funnel() {
 		}
 		//return 2 + (h-30)*(h-30)*(h-30) * 0.00004 + (h-30)*(h-30) * 0.0002;
 		//return 2 * (h-30) + Math.sin(h-30) * (h-30) * 1;
-		return 2 + Math.sqrt(h-1) * 15;
+		//return 2 + Math.sqrt(h-1) * 15;
+		return 2 + (h-1);
 	}
 		
 }
