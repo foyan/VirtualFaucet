@@ -24,31 +24,44 @@
 	
 	<body>
 		
-		<div class="box title">
-			Virtual Fauceteering
-		</div>
-		
-		<div id="play" class="box">
+		<table id="lay">
 			
-			<a href="#" data-bind="click: tap" style="display:inline-block;margin-left:50px;"><img src="assets/faucet.png"/></a>
-			<div style="float:right;">
-			<textarea data-bind="value: message" >
-				Post something to the faucet...
-			</textarea>
-			<br/>
-			<input type="button" value="Post" data-bind="click: encode" />
-			</div>
+			<tr>
+				<td colspan="2">
+					<div class="box title">
+						Virtual Fauceteering
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="width:521px;">
+					<div id="play" class="box">
+						
+						<a href="#" data-bind="click: tap" style="display:inline-block;margin-left:50px;"><img src="assets/faucet.png"/></a>
+						
+						<div style="float:right;">
+							<textarea data-bind="value: message" >
+								Post something to the faucet...
+							</textarea>
+							<br/>
+							<input type="button" value="Post" data-bind="click: encode" />
+						</div>
+				
+						<canvas id="vf" width="500" height="500">
+						</canvas>
+						
+						<div class="coolResult" data-bind="text: formattedOutflowVelocity" style="text-align:center;">
+						</div>
 			
-			<canvas id="vf" width="500" height="500">
-			</canvas>
+					</div>
+				</td>
+				<td>
+					<div class="box" id="graph" style="width:95%;">
+					</div>
+				</td>
+			</tr>
 			
-			<div class="coolResult" data-bind="text: formattedOutflowVelocity" style="text-align:center;">
-			</div>
-
-		</div>
-		
-		<div id="graph" class="box"></div>
-					
+		</table>
 		
 	</body>
 	

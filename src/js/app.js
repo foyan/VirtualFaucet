@@ -179,6 +179,7 @@ $(function () {
 	var cs = new ChartSource(app.dt);
 	app.chartSource = cs;
 	cs.init("graph");
+	cs.funnel = app.funnel;
 	
 	ko.applyBindings(app);
 	

@@ -28,5 +28,15 @@ body {
 }
 
 #graph {
-	height: 500px;
+	height: 100px;
+}
+
+#lay {
+	border-collapse: collapse;
+	width: 100%;
+}
+#lay td {
+	margin:0;
+	padding:0;
+	vertical-align: top;
 }
