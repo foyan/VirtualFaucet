@@ -56,15 +56,7 @@ function App() {
 	this.fillHeight = 0;
 	
 	this.calculateFillHeight = function () {
-		var fillHeight = 0;
-		
-		var vol = 0;
-		while (vol < self.volume) {
-			vol = self.integrator.integrate(vol, fillHeight, self.funnel.radius, fillHeight + 1);
-			fillHeight++;
-		}
-		
-		self.fillHeight = fillHeight;		
+		self.fillHeight = self.integrator.integrateReverse(0, 0, self.funnel.radius, self.volume);
 	}
 	
 	this.paintOutflow = function (cx, cy, ctx, r0) {
@@ -111,7 +103,7 @@ function App() {
 		
 	};
 	
-	this.dt = 0.1;
+	this.dt = 0.05;
 
 	this.looper = null;
 	
@@ -128,7 +120,7 @@ function App() {
 	}
 	
 	this.flowOut = function () {
-		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight) * 0.2;
+		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight);
 		self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity);
 	}
 	
@@ -184,7 +176,7 @@ $(function () {
 	var app = new App();
 	app.paint();
 	
-	var cs = new ChartSource();
+	var cs = new ChartSource(app.dt);
 	app.chartSource = cs;
 	cs.init("graph");
 	
@@ -194,7 +186,6 @@ $(function () {
 	
 	console.log(app);
 	
-
 })
 
 

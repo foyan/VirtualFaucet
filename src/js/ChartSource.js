@@ -1,10 +1,17 @@
-function ChartSource() {
+function ChartSource(dt) {
 	
 	var self = this;
 	
 	this.x = [];
 	
-	this.y = [];
+	this.v = [];
+	this.h = [];
+	
+	for (var i = -1000 * dt; i < 0; i += 0.1) {
+		this.x.push(i);
+		this.v.push(0);
+		this.h.push(0);
+	}
 	
 	this.lineChart = null;
 	
@@ -15,16 +22,21 @@ function ChartSource() {
 			    
 	}
 	
-	this.add = function (x, y) {
-		self.x.push(x);
-		self.y.push(y);
+	this.add = function (x, v) {
+		self.x.push(x * dt);
+		self.v.push(v);
+		self.h.push(v * v / 2.0 / 9.81);
+				
+		self.x.shift();
+		self.v.shift();
+		self.h.shift();
 	}
 	
 	this.draw = function () {
 		if (self.lineChart) {
 			self.lineChart.remove();
 		}
-	    self.lineChart = self.r.linechart(0, 0, 800, 220, self.x, self.y);
+	    self.lineChart = self.r.linechart(0, 0, 1000, 100, self.x, [self.v, self.h]);
 	}
 	
 }
