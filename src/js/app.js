@@ -15,8 +15,11 @@ function App() {
 	
 	this.integrator = new RungeKuttaIntegrator();
 	
+	this.lastInflow = 0;
+	
 	this.tap = function() {
 		self.volume += 200;
+		self.lastInflow = 200;
 		self.paint();
 	}
 	
@@ -70,6 +73,21 @@ function App() {
 		}
 	}
 	
+	this.paintInflow = function (cx, cy, ctx, height) {
+		if (self.lastInflow > 0) {
+			ctx.strokeStyle = "none";
+			ctx.fillStyle = "blue";
+			var r = Math.sqrt(self.lastInflow) / 2;
+
+			ctx.fillRect(cx - r - 66, 0, 2 * r, cy - self.funnel.height());
+			
+			ctx.save();
+			self.paintFunnel(ctx, cx, cy, self.funnel.height(), self.funnel.radius, self.context.clip);
+			ctx.fillRect(cx - r - 66, 0, 2 * r, cy - height);
+			ctx.restore();
+		}
+	}
+	
 	this.paint = function () {
 		
 		self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
@@ -82,6 +100,7 @@ function App() {
 		self.context.fillStyle = "blue";
 		self.paintFunnel(self.context, cx, cy, self.fillHeight, self.funnel.radius, self.context.fill);
 
+		self.paintInflow(cx, cy, self.context, self.fillHeight);
 		self.paintOutflow(cx, cy, self.context, self.funnel.radius(0));
 
 		self.context.lineWidth = 2;
@@ -125,6 +144,10 @@ function App() {
 		self.calculateFillHeight();
 		self.flowOut();
 		self.calculateFillHeight();
+		
+		if (self.playCount % 3 == 0) {
+			self.lastInflow = 0;
+		}
 		
 		self.paint();
 		
