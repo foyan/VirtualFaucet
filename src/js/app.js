@@ -120,7 +120,7 @@ function App() {
 	}
 	
 	this.flowOut = function () {
-		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight);
+		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight) * 0.2;
 		self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity);
 	}
 	
@@ -163,7 +163,8 @@ function App() {
 	this.encode = function () {
 		var enc = "";
 		for (var i = 0; i < self.message().length; i++) {
-			enc += self.message().charCodeAt(i).toString(2);
+			var bin = "0000000" + self.message().charCodeAt(i).toString(2);
+			enc += bin.substr(bin.length - 8, 8);
 		}
 		self.encodedMessage = enc;
 	}
@@ -184,9 +185,7 @@ $(function () {
 	ko.applyBindings(app);
 	
 	app.start();
-	
-	console.log(app);
-	
-})
+		
+});
 
 

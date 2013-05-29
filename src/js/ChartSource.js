@@ -11,9 +11,9 @@ function ChartSource(dt) {
 	this.plainText = [];
 	
 	var pt = "";
-	for (var i = 0; i < 200; i++) {
+	/*for (var i = 0; i < 200; i++) {
 		pt += ".\u200B";
-	}
+	}*/
 	for (var i = 0; i < 8; i++) {
 		this.plainText[i] = ko.observable(pt);
 	}
@@ -59,9 +59,10 @@ function ChartSource(dt) {
 		self.prevV = V;
 		
 		self.currentByte = ((self.currentByte << 1) + bit) & 255;
-		var ch = self.currentByte > 31 ? String.fromCharCode(self.currentByte) : ".";
-		self.plainText[x % 8](self.plainText[x % 8]().substr(2) + ch + "\u200B");
-		
+		var ch = self.currentByte > 31 ? String.fromCharCode(self.currentByte) : " ";
+		//self.plainText[x % 8](self.plainText[x % 8]().substr(2) + ch + "\u200B");
+		self.plainText[x % 8](self.plainText[x % 8]() + ch + "");
+				
 	}
 	
 	this.draw = function () {
