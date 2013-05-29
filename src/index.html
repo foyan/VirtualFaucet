@@ -3,7 +3,7 @@
 <html>
 	
 	<head>
-		<title>Virtual Faucet</title>
+		<title>Virtual Fauceteering</title>
 		
     	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     	<meta content="utf-8" http-equiv="encoding">
@@ -29,19 +29,18 @@
 			<tr>
 				<td colspan="2">
 					<div class="box title">
-						Virtual Fauceteering - <a href="#" data-bind="click: stop">[Stop]</a>
+						Virtual Fauceteering
 					</div>
 				</td>
 			</tr>
 			<tr>
-				<td style="width:521px;">
+				<td style="width:521px;" rowspan="2">
 					<div id="play" class="box">
 						
 						<a href="#" data-bind="click: tap" style="display:inline-block;margin-left:50px;"><img src="assets/faucet.png"/></a>
 						
 						<div style="float:right;">
 							<textarea data-bind="value: message" >
-								Post something to the faucet...
 							</textarea>
 							<br/>
 							<input type="button" value="Post" data-bind="click: encode" />
@@ -50,6 +49,10 @@
 						<canvas id="vf" width="500" height="500">
 						</canvas>
 						
+						<div class="coolResult" data-bind="text: formattedVolume" style="text-align:center;">
+						</div>
+						<div class="coolResult" data-bind="text: formattedFillHeight" style="text-align:center;">
+						</div>
 						<div class="coolResult" data-bind="text: formattedOutflowVelocity" style="text-align:center;">
 						</div>
 			
@@ -57,16 +60,27 @@
 				</td>
 				<td>
 					<div class="box">
-						<div data-bind="text: chartSource.plainText[0]"></div>
-						<div data-bind="text: chartSource.plainText[1]"></div>
-						<div data-bind="text: chartSource.plainText[2]"></div>
-						<div data-bind="text: chartSource.plainText[3]"></div>
-						<div data-bind="text: chartSource.plainText[4]"></div>
-						<div data-bind="text: chartSource.plainText[5]"></div>
-						<div data-bind="text: chartSource.plainText[6]"></div>
-						<div data-bind="text: chartSource.plainText[7]"></div>
-						
+						<div data-bind="text: chartSource.plainText[0], css: {'small': true, 'nogibberish': chartSource.minGibberishIndex() == 0}"></div>
+						<div data-bind="text: chartSource.plainText[1], css: {'small': true, 'nogibberish': chartSource.minGibberishIndex() == 1}" class="small"></div>
+						<div data-bind="text: chartSource.plainText[2], css: {'small': true, 'nogibberish': chartSource.minGibberishIndex() == 2}" class="small"></div>
+						<div data-bind="text: chartSource.plainText[3], css: {'small': true, 'nogibberish': chartSource.minGibberishIndex() == 3}" class="small"></div>
+						<div data-bind="text: chartSource.plainText[4], css: {'small': true, 'nogibberish': chartSource.minGibberishIndex() == 4}" class="small"></div>
+						<div data-bind="text: chartSource.plainText[5], css: {'small': true, 'nogibberish': chartSource.minGibberishIndex() == 5}" class="small"></div>
+						<div data-bind="text: chartSource.plainText[6], css: {'small': true, 'nogibberish': chartSource.minGibberishIndex() == 6}" class="small"></div>
+						<div data-bind="text: chartSource.plainText[7], css: {'small': true, 'nogibberish': chartSource.minGibberishIndex() == 7}" class="small"></div>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td style="vertical-align: bottom">
+					<div class="box">
 						<div id="graph" style="width:95%;">
+						</div>
+						<div>
+							<span style="color: blue">v [m/s]</span>,
+							<span style="color: orange">h(v) = v² / (2 * g) [m]</span>,
+							<span style="color: green">V(h) = 2 * Int_0^h r(x) dx [m²]</span>
 						</div>
 					</div>
 				</td>

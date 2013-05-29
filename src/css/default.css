@@ -23,7 +23,11 @@ body {
 	width: 500px;
 }
 
-.coolResult, .title {
+.coolResult {
+	font-size: 14pt;
+}
+
+.title {
 	font-size: 20pt;
 }
 
@@ -39,4 +43,14 @@ body {
 	margin:0;
 	padding:0;
 	vertical-align: top;
+}
+
+.small {
+	font-size: 10pt;
+	opacity: 0.7;
+}
+
+.small.nogibberish {
+	opacity: 1.0;
+	font-weight: bold;
 }

@@ -3,7 +3,7 @@ function RungeKuttaIntegrator() {
 	this.integrate = function (y0, t0, y, tend) {
 		
 		var n = 0;
-		var h = 0.01;
+		var h = 0.001;
 		var tn = t0;
 		var yn = y0;
 		

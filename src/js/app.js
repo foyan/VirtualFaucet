@@ -14,14 +14,15 @@ function App() {
 	this.context = self.canvas.getContext("2d");
 	
 	this.volume = 0;
+	this.formattedVolume = ko.observable("V = 0.00 m²")
 	
-	this.integrator = new RungeKuttaIntegrator();
+	this.integrator = new RungeKuttaIntegrator(); 
 	
 	this.lastInflow = 0;
 	
 	this.tap = function() {
-		self.volume += 200;
-		self.lastInflow = 200;
+		self.volume += 500;
+		self.lastInflow = 500;
 		self.paint();
 	}
 	
@@ -55,8 +56,10 @@ function App() {
 	
 	this.fillHeight = 0;
 	
+	this.formattedFillHeight = ko.observable("2 * Int_0^h r(x) dx = V => h = 0.000 m");
+	
 	this.calculateFillHeight = function () {
-		self.fillHeight = self.integrator.integrateReverse(0, 0, self.funnel.radius, self.volume);
+		self.fillHeight = self.integrator.integrateReverse(0, 0, self.funnel.radius, self.volume) / 2;
 	}
 	
 	this.paintOutflow = function (cx, cy, ctx, r0) {
@@ -108,7 +111,7 @@ function App() {
 	this.looper = null;
 	
 	this.outflowVelocity = 0;
-	this.formattedOutflowVelocity = ko.observable("0.000 m/s");
+	this.formattedOutflowVelocity = ko.observable("v(h) = sqrt(2gh) = 0.000 m/s");
 	
 	this.start = function () {
 		self.looper = setInterval(self.play, 1000 * self.dt);
@@ -120,7 +123,7 @@ function App() {
 	}
 	
 	this.flowOut = function () {
-		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight) * 0.2;
+		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight);
 		self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity);
 	}
 	
@@ -146,7 +149,9 @@ function App() {
 		self.paint();
 		
 		if (self.playCount % 2 == 0) {
-			self.formattedOutflowVelocity((self.outflowVelocity*5).toFixed(3) + " m/s");
+			self.formattedOutflowVelocity("v(h) = sqrt(2gh) = " + (self.outflowVelocity*5).toFixed(3) + " m/s");
+			self.formattedVolume("V = " + self.volume.toFixed(2) + " m²");
+			self.formattedFillHeight("2 * Int_0^h r(x) dx = V => h = " + self.fillHeight.toFixed(3) + " m");
 		}
 		
 		self.chartSource.add(self.playCount, self.outflowVelocity);
@@ -158,7 +163,7 @@ function App() {
 		self.playCount++;
 	}
 	
-	this.message = ko.observable("Type something gangsta");
+	this.message = ko.observable("Fauceteering brings fresh possibilities to espionage communications.");
 	
 	this.encode = function () {
 		var enc = "";

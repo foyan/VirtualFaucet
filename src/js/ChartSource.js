@@ -10,12 +10,12 @@ function ChartSource(dt) {
 	
 	this.plainText = [];
 	
-	var pt = "";
-	/*for (var i = 0; i < 200; i++) {
-		pt += ".\u200B";
-	}*/
+	this.gibberishFactors = [4, 4, 4, 4, 4, 4, 4, 4];
+	
+	this.minGibberishIndex = ko.observable(0);
+	
 	for (var i = 0; i < 8; i++) {
-		this.plainText[i] = ko.observable(pt);
+		this.plainText[i] = ko.observable("\u00A0");
 	}
 	
 	for (var i = -1000 * dt; i < 0; i += 0.1) {
@@ -42,7 +42,7 @@ function ChartSource(dt) {
 	
 	this.add = function (x, v) {
 		var h = v * v / 2.0 / 9.81;
-		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2 / 100.0;
+		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2 / 2.0;
 		
 		self.x.push(x * dt);
 		
@@ -59,17 +59,65 @@ function ChartSource(dt) {
 		self.prevV = V;
 		
 		self.currentByte = ((self.currentByte << 1) + bit) & 255;
-		var ch = self.currentByte > 31 ? String.fromCharCode(self.currentByte) : " ";
-		//self.plainText[x % 8](self.plainText[x % 8]().substr(2) + ch + "\u200B");
-		self.plainText[x % 8](self.plainText[x % 8]() + ch + "");
+		var ch = self.isPrintable(self.currentByte) ? String.fromCharCode(self.currentByte) : "\u00A0";
+		var newText = self.plainText[x % 8]() + ch;
+		if (newText.length > 100) {
+			newText = newText.substr(newText.length - 100, 100);
+		}
+
+		for (var i = 0; i < 8; i++) {
+			self.gibberishFactors[i] *= 0.99;
+		}
+
+		self.gibberishFactors[x % 8] += self.isGibberish(self.currentByte) ? 0.0 : 0.125;
+		
+		var minIndex = self.minGibberishIndex();
+		var minGibberish = self.gibberishFactors[minIndex];
+		for (var i = 0; i < 8; i++) {
+			if (self.gibberishFactors[i] > minGibberish) {
+				minGibberish = self.gibberishFactors[i];
+				minIndex = i;
+			}
+		}
+		self.minGibberishIndex(minIndex);
+
+		self.plainText[x % 8](newText);
 				
+	}
+	
+	this.isGibberish = function (byte) {
+		if (byte <= 31) {
+			return true;
+		}
+		if (byte >= 127) {
+			return true;
+		}
+		return false;
+	}
+	
+	this.isPrintable = function (byte) {
+		if (byte <= 31) {
+			return false;
+		}
+		if (byte == 127) {
+			return false;
+		}
+		if (byte >= 128) {
+			return false;
+		}
+		return true;
 	}
 	
 	this.draw = function () {
 		if (self.lineChart) {
 			self.lineChart.remove();
 		}
-	    self.lineChart = self.r.linechart(0, 0, 1000, 100, self.x, [self.v, self.h, self.V]);
+	    self.lineChart = self.r.linechart(0, 0, 1000, 100, self.x, [self.v, self.h, self.V], {
+	    	axis: "0 0 1 1",
+	    	colors: [
+	    		"blue", "orange", "green"
+	    	],
+	    });
 	}
 	
 }
