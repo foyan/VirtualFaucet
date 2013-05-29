@@ -21,8 +21,8 @@ function App() {
 	this.lastInflow = 0;
 	
 	this.tap = function() {
-		self.volume += 500;
-		self.lastInflow = 500;
+		self.volume += 100;
+		self.lastInflow = 100;
 		self.paint();
 	}
 	
@@ -33,7 +33,7 @@ function App() {
 		var rh0 = r(0);
 		
 		ctx.moveTo(cx - rh1, cy - H);
-		ctx.lineTo(cx + rh1, cy - H);
+		ctx.moveTo(cx + rh1, cy - H);
 		
 		for (var h = H - 1; h > 0; --h) {
 			var rh = r(h);
@@ -76,11 +76,11 @@ function App() {
 			ctx.fillStyle = "blue";
 			var r = Math.sqrt(self.lastInflow) / 2;
 
-			ctx.fillRect(cx - r - 66, 0, 2 * r, cy - self.funnel.height());
+			ctx.fillRect(cx - r - 117, 0, 2 * r, cy - self.funnel.height());
 			
 			ctx.save();
 			self.paintFunnel(ctx, cx, cy, self.funnel.height(), self.funnel.radius, self.context.clip);
-			ctx.fillRect(cx - r - 66, 0, 2 * r, cy - height);
+			ctx.fillRect(cx - r - 117, 0, 2 * r, cy - height);
 			ctx.restore();
 		}
 	}
@@ -123,8 +123,12 @@ function App() {
 	}
 	
 	this.flowOut = function () {
-		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight);
-		self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity);
+		//self.calculateFillHeight();
+		//for (var i = 0; i < 100; i++) {
+			self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight);
+			self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity * self.dt);
+			//self.calculateFillHeight();
+		//}
 	}
 	
 	this.playCount = 0;
@@ -149,7 +153,7 @@ function App() {
 		self.paint();
 		
 		if (self.playCount % 2 == 0) {
-			self.formattedOutflowVelocity("v(h) = sqrt(2gh) = " + (self.outflowVelocity*5).toFixed(3) + " m/s");
+			self.formattedOutflowVelocity("v(h) = sqrt(2gh) = " + (self.outflowVelocity).toFixed(3) + " m/s");
 			self.formattedVolume("V = " + self.volume.toFixed(2) + " m²");
 			self.formattedFillHeight("2 * Int_0^h r(x) dx = V => h = " + self.fillHeight.toFixed(3) + " m");
 		}
