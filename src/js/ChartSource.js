@@ -52,8 +52,9 @@ function ChartSource(dt) {
 	
 	this.add = function (x, v) {
 		var h = v > 0 ? v * v / 2.0 / 9.81 : 0;
+
 		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2;
-		
+
 		var dVo = v * self.funnel.radius(0) * 2 * dt;
 		var dVi = V - self.prevV - dVo;
 				

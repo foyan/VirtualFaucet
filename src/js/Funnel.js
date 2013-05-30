@@ -3,16 +3,12 @@ function Funnel() {
 	var self = this;
 	
 	this.height = ko.observable(300);
-	
-	// 200 * 5 = 1000
-	// 200 * 145 / 2 = 14500
-	// => 15500 * 2 = 31000
-	
+		
 	this.radius = function (h) {
-		if (h <= 1) {
+		if (h <= 10) {
 			return 4;
 		}
-		return 4 + self.r_h()(h-1);
+		return 4 + self.r_h()(h-10);
 	}
 	
 	this.rofh = ko.observable("h*h*h * 0.00002 + h*h * 0.0002");

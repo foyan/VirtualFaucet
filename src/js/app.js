@@ -162,7 +162,7 @@ function App() {
 		}
 		
 		self.chartSource.add(self.playCount, self.outflowVelocity);
-		
+				
 		if (self.playCount % 5 == 0) {
 			self.chartSource.draw();
 		}
