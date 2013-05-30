@@ -7,6 +7,8 @@ function ChartSource(dt) {
 	this.v = [];
 	this.h = [];
 	this.V = [];
+	this.dVo = [];
+	this.dVi = [];
 	
 	this.plainText = [];
 	
@@ -23,7 +25,15 @@ function ChartSource(dt) {
 		this.v.push(0);
 		this.h.push(0);
 		this.V.push(0);
+		this.dVo.push(0);
+		this.dVi.push(0);
 	}
+	
+	this.showv = ko.observable(true);
+	this.showh = ko.observable(true);
+	this.showV = ko.observable(true);
+	this.showdVo = ko.observable(true);
+	this.showdVi = ko.observable(true);
 	
 	this.integrator = new RungeKuttaIntegrator();
 	this.funnel = null;
@@ -41,19 +51,25 @@ function ChartSource(dt) {
 	this.prevV = 0;
 	
 	this.add = function (x, v) {
-		var h = v * v / 2.0 / 9.81;
-		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2 / 10.0;
+		var h = v > 0 ? v * v / 2.0 / 9.81 : 0;
+		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2;
 		
+		var dVo = v * self.funnel.radius(0) * 2 * dt;
+		var dVi = V - self.prevV - dVo;
+				
 		self.x.push(x * dt);
-		
 		self.v.push(v);
 		self.h.push(h);
-		self.V.push(V);
+		self.V.push(V / 10.0);
+		self.dVo.push(dVo);
+		self.dVi.push(dVi);
 				
 		self.x.shift();
 		self.v.shift();
 		self.h.shift();
 		self.V.shift();
+		self.dVo.shift();
+		self.dVi.shift();
 		
 		var bit = V > self.prevV ? 1 : 0;
 		self.prevV = V;
@@ -112,11 +128,31 @@ function ChartSource(dt) {
 		if (self.lineChart) {
 			self.lineChart.remove();
 		}
-	    self.lineChart = self.r.linechart(0, 0, 1000, 100, self.x, [self.v, self.h, self.V], {
+		var series = [];
+		var colors = [];
+		if (self.showv()) {
+			series.push(self.v);
+			colors.push("blue");
+		}
+		if (self.showh()) {
+			series.push(self.h);
+			colors.push("orange");
+		}
+		if (self.showV()) {
+			series.push(self.V);
+			colors.push("green");
+		}
+		if (self.showdVo()) {
+			series.push(self.dVo);
+			colors.push("red");
+		}
+		if (self.showdVi()) {
+			series.push(self.dVi);
+			colors.push("purple");
+		}
+	    self.lineChart = self.r.linechart(0, 0, 1000, 100, self.x, series, {
 	    	axis: "0 0 1 1",
-	    	colors: [
-	    		"blue", "orange", "green"
-	    	],
+	    	colors: colors
 	    });
 	}
 	

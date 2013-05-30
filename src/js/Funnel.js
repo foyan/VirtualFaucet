@@ -20,7 +20,7 @@ function Funnel() {
 	this.prototypes = [
 		"Math.sqrt(h) * 15",
 		"(Math.floor(h / 100)) * 100",
-		"h < 30 ? 200 : 1"
+		"h < 30 ? 200 : h > 250 ? 200 : 1"
 	];
 	
 	this.r_h = ko.computed(function () {

@@ -26,6 +26,8 @@ function App() {
 		self.paint();
 	}
 	
+	this.fullThrottle = ko.observable(false);
+	
 	this.paintFunnel = function (ctx, cx, cy, H, r, draw) {
 		ctx.beginPath();
 		
@@ -59,7 +61,7 @@ function App() {
 	this.formattedFillHeight = ko.observable("2 * Int_0^h r(x) dx = V => h = 0.000 m");
 	
 	this.calculateFillHeight = function () {
-		self.fillHeight = self.integrator.integrateReverse(0, 0, self.funnel.radius, self.volume) / 2;
+		self.fillHeight = self.integrator.integrateReverse(0, 0, self.funnel.radius, self.volume / 2);
 	}
 	
 	this.paintOutflow = function (cx, cy, ctx, r0) {
@@ -123,12 +125,8 @@ function App() {
 	}
 	
 	this.flowOut = function () {
-		//self.calculateFillHeight();
-		//for (var i = 0; i < 100; i++) {
-			self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight);
-			self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity * self.dt);
-			//self.calculateFillHeight();
-		//}
+		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight);
+		self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity * self.dt);
 	}
 	
 	this.playCount = 0;
@@ -140,6 +138,11 @@ function App() {
 				self.tap();
 			}
 			self.encodedMessage = self.encodedMessage.substr(1);
+		}
+		
+		if (self.fullThrottle()) {
+			self.volume += 200;
+			self.lastInflow = 200;
 		}
 		
 		self.calculateFillHeight();

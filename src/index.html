@@ -43,8 +43,8 @@
 							<textarea data-bind="value: message" >
 							</textarea>
 							<br/>
-							<input type="button" value="Post" data-bind="click: encode" />
-							<br/>
+							<input type="button" value="Post" data-bind="click: encode" /> <input type="checkbox" data-bind="checked: fullThrottle" />Full throttle!
+							<br/> 
 							r(h) = <input type="text" data-bind="value:funnel.rofh"/><br/>
 							<!-- ko foreach: funnel.prototypes -->
 							<input type="button" data-bind="value: $data, click: function () {$parent.funnel.rofh($data);}"></a><br/>
@@ -83,9 +83,11 @@
 						<div id="graph" style="width:95%;">
 						</div>
 						<div>
-							<span style="color: blue">v [m/s]</span>,
-							<span style="color: orange">h(v) = v² / (2 * g) [m]</span>,
-							<span style="color: green">V(h) = 2 * Int_0^h r(x) dx [m²]</span>
+							<input type="checkbox" data-bind="checked: chartSource.showv"/><span style="color: blue">v(t) [m/s]</span>,
+							<input type="checkbox" data-bind="checked: chartSource.showh"/><span style="color: orange">h(t) = v²(t) / (2 * g) [m]</span>,
+							<input type="checkbox" data-bind="checked: chartSource.showV"/><span style="color: green">V(t) = 2 * Int_0^h(t) r(x) dx [m²]</span>,<br/>
+							<input type="checkbox" data-bind="checked: chartSource.showdVo"/><span style="color: red">ΔV_out(t) = v(t) * 2 * r(0) * dt</span>,
+							<input type="checkbox" data-bind="checked: chartSource.showdVi"/><span style="color: purple">ΔV_in(t) = V(t) - V(t-1) - ΔV_in(t)</span>
 						</div>
 					</div>
 				</td>
