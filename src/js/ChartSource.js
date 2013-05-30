@@ -20,7 +20,7 @@ function ChartSource(dt) {
 		this.plainText[i] = ko.observable("\u00A0");
 	}
 	
-	for (var i = -1000 * dt; i < 0; i += 0.1) {
+	for (var i = -200 * dt; i < 0; i += 0.1) {
 		this.x.push(i);
 		this.v.push(0);
 		this.h.push(0);
@@ -49,14 +49,15 @@ function ChartSource(dt) {
 	this.currentByte = 0;
 	
 	this.prevV = 0;
+	this.prevv = 0;
 	
 	this.add = function (x, v) {
 		var h = v > 0 ? v * v / 2.0 / 9.81 : 0;
 
 		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2;
 
-		var dVo = v * self.funnel.radius(0) * 2 * dt;
-		var dVi = V - self.prevV - dVo;
+		var dVo = self.prevv * self.funnel.radius(0) * 2 * dt;
+		var dVi = V - self.prevV + dVo;
 				
 		self.x.push(x * dt);
 		self.v.push(v);
@@ -74,6 +75,7 @@ function ChartSource(dt) {
 		
 		var bit = V > self.prevV ? 1 : 0;
 		self.prevV = V;
+		self.prevv = v;
 		
 		self.currentByte = ((self.currentByte << 1) + bit) & 255;
 		var ch = self.isPrintable(self.currentByte) ? String.fromCharCode(self.currentByte) : "\u00A0";
