@@ -42,7 +42,7 @@ function ChartSource(dt) {
 	
 	this.add = function (x, v) {
 		var h = v * v / 2.0 / 9.81;
-		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2 / 200.0;
+		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2 / 10.0;
 		
 		self.x.push(x * dt);
 		

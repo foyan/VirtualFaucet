@@ -45,7 +45,10 @@
 							<br/>
 							<input type="button" value="Post" data-bind="click: encode" />
 							<br/>
-							r(h) = <input type="text" data-bind="value:funnel.rofh"/>
+							r(h) = <input type="text" data-bind="value:funnel.rofh"/><br/>
+							<!-- ko foreach: funnel.prototypes -->
+							<input type="button" data-bind="value: $data, click: function () {$parent.funnel.rofh($data);}"></a><br/>
+							<!-- /ko -->
 						</div>
 				
 						<canvas id="vf" width="500" height="500">

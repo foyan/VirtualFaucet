@@ -21,8 +21,8 @@ function App() {
 	this.lastInflow = 0;
 	
 	this.tap = function() {
-		self.volume += 100;
-		self.lastInflow = 100;
+		self.volume += 200;
+		self.lastInflow = 200;
 		self.paint();
 	}
 	
@@ -106,7 +106,7 @@ function App() {
 		
 	};
 	
-	this.dt = 0.05;
+	this.dt = 0.2;
 
 	this.looper = null;
 	
@@ -114,7 +114,7 @@ function App() {
 	this.formattedOutflowVelocity = ko.observable("v(h) = sqrt(2gh) = 0.000 m/s");
 	
 	this.start = function () {
-		self.looper = setInterval(self.play, 1000 * self.dt);
+		self.looper = setInterval(self.play, 500 * self.dt);
 	}
 	
 	this.stop = function () {
