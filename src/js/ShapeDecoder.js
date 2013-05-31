@@ -42,13 +42,21 @@ function ShapeDecoder(dt) {
 	}
 	
 	this.draw = function () {
+		if (self.x.length > 10) {
+			self.guess();
+		}
+		
 		self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
 		if (self.regressionFunction) {
 			self.context.strokeStyle = "blue";
+			
 			self.context.beginPath();
 			self.context.moveTo(self.canvasWidth / 2 - self.regressionFunction(self.canvasHeight), 0);
 			for (var i = self.canvasHeight - 1; i >= 0; --i) {
 				self.context.lineTo(self.canvasWidth / 2 - self.regressionFunction(i), self.canvasHeight - i);
+			}
+			for (var i = 0; i < self.canvasHeight; i++) {
+				self.context.lineTo(self.canvasWidth / 2 + self.regressionFunction(i), self.canvasHeight - i);
 			}
 			
 			self.context.stroke();

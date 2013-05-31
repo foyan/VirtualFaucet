@@ -11,7 +11,9 @@ function LinearRegression() {
 		var b = mode.getB(v);
 		var Qb = self.transformB(b, vs, mode.coeffs);
 		var x = self.solve(Qb, R, mode.coeffs);
-				
+		
+		console.log(x);
+		
 		return mode.getFunction(x);
 		
 	}
@@ -51,6 +53,13 @@ function LinearRegression() {
 			
 			var lrA = self.getLowerRight(A);
 			lrA = self.getR(lrA, vs);
+
+			for (var j = 0; j < lrA[0].length; j++) {
+				for (var i = 0; i < lrA.length; i++) {
+					A[i+1][j+1] = lrA[i][j];
+				}
+			}
+
 		}
 		
 		return A;
