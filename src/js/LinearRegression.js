@@ -4,13 +4,16 @@ function LinearRegression() {
 	
 	this.calculateFunction = function (u, v, mode) {
 		
-		var A = mode.getA(u);
-		var R = self.getR(A, v);
-		var b = mode.getB(v);
-		var Qb = self.transformB(b, v, mode.coeffs);
-		var x = self.solve(Qb, R, mode.coeffs);
+		var vs = [];
 		
-		return x;
+		var A = mode.getA(u);
+		var R = self.getR(A, vs);
+		var b = mode.getB(v);
+		var Qb = self.transformB(b, vs, mode.coeffs);
+		var x = self.solve(Qb, R, mode.coeffs);
+				
+		return mode.getFunction(x);
+		
 	}
 	
 	this.getR = function (A, vs) {
@@ -37,12 +40,12 @@ function LinearRegression() {
 			for (var j = 1; j < A[1].length; j++) {
 				var x = [];
 				for (var i = 0; i < A.length; i++) {
-					x[i] = A[i, j];
+					x[i] = A[i][j];
 				}
 				
 				var vTx = self.scalarProductOf(v, x);
 				for (var i = 0; i < A.length; i++) {
-					A[i, j] = x[i] - squareNorm * vTx * v[i];
+					A[i][j] = x[i] - squareNorm * vTx * v[i];
 				}
 			}
 			
@@ -75,7 +78,7 @@ function LinearRegression() {
 	this.solve = function(Qb, R, coeffs) {
 		var x = [];
 		for (var j = coeffs-1; j >= 0; --j) {
-			var s = Qb[i];
+			var s = Qb[j];
 			for (var i = j+1; i < coeffs; i++) {
 				s -= x[i] * R[j][i];
 			}
@@ -87,7 +90,7 @@ function LinearRegression() {
 	this.norm = function (v) {
 		var s = 0;
 		for (var i = 0; i < v.length; i++) {
-			s += v * v;
+			s += v[i] * v[i];
 		}
 		return Math.sqrt(s);
 	}
@@ -103,7 +106,7 @@ function LinearRegression() {
 	this.getLowerRight = function (M) {
 		var N = [];
 		for (var i = 1; i < M.length; i++) {
-			N[i] = [];
+			N[i-1] = [];
 			for (var j = 1; j < M[1].length; j++) {
 				N[i-1][j-1] = M[i][j];
 			}
@@ -136,12 +139,19 @@ LinearRegression.Polynomial = function (grade) {
 			return b;
 		},
 		
-		calculate: function (u, x) {
-			var r = 0;
-			for (var i = 0; i < u.length; i++) {
-				r += Math.pow(u, i);
+		getFunction: function (x) {
+			var fs = $.map(x, function (xi, i) {
+				return function (u) {
+					return xi * Math.pow(u, i);
+				}
+			});
+			return function (u) {
+				var s = 0;
+				for (var i = 0; i < x.length; i++) {
+					s += fs[i](u);
+				}
+				return s;
 			}
-			return r;
 		},
 		
 		coeffs: grade + 1
@@ -149,3 +159,5 @@ LinearRegression.Polynomial = function (grade) {
 	};
 	
 }
+
+var foo = null;
