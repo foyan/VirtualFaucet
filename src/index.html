@@ -39,42 +39,53 @@
 				<td style="width:521px;" rowspan="3">
 					<div id="play" class="box" style="padding-left:0; padding-right: 0;position: relative;">
 						
+						<input type="checkbox" data-bind="checked: fullThrottle" />Full throttle!<br/>
 						<a href="#" data-bind="click: tap" style="display:inline-block;margin-left:0px;"><img src="assets/faucet.png"/></a>
 						
 						<div style="position:absolute;top:10px;right:10px;">
-							<textarea data-bind="value: message" >
-							</textarea>
-							<br/>
-							<input type="button" value="Post" data-bind="click: encode" /> <input type="checkbox" data-bind="checked: fullThrottle" />Full throttle!
-							<br/> 
 							r(h) = <input type="text" data-bind="value:funnel.rofh"/><br/>
 							<!-- ko foreach: funnel.prototypes -->
 							<input type="button" data-bind="value: $data, click: function () {$parent.funnel.rofh($data);}"></a><br/>
 							<!-- /ko -->
+							<br/>
+							<input type="checkbox" data-bind="checked: displays.message" />Semantics?
+							<div data-bind="visible: displays.message">
+								<textarea data-bind="value: message" >
+								</textarea><br/>
+								<input type="button" value="Post" data-bind="click: encode" />
+							</div>
 						</div>
 				
-						<canvas id="vf" width="500" height="500">
+						<br/>
+						<input type="checkbox" data-bind="checked: displays.funnel" style="position: absolute; top: 400px" />
+						<canvas id="vf" width="500" height="320">
 						</canvas>
 						
-						<div class="coolResult" data-bind="html: formattedOutflowVelocity" style="text-align:center;">
-						</div>
-						<div class="coolResult" data-bind="html: formattedFillHeight" style="text-align:center;">
-						</div>
-						<div class="coolResult" data-bind="html: formattedVolume" style="text-align:center;">
+						<input type="checkbox" data-bind="checked: displays.measure" />Measure?
+						<div data-bind="style: {visibility: displays.measure() ? 'visible' : 'hidden'}">
+							<div class="coolResult" data-bind="html: formattedOutflowVelocity" style="text-align:center;">
+							</div>
+							<div class="coolResult" data-bind="html: formattedFillHeight" style="text-align:center;">
+							</div>
+							<div class="coolResult" data-bind="html: formattedVolume" style="text-align:center;">
+							</div>
 						</div>
 			
 					</div>
 				</td>
 				<td>
 					<div class="box">
-						<div data-bind="text: outflowDecoder.plainText[0], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 0}"></div>
-						<div data-bind="text: outflowDecoder.plainText[1], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 1}" class="small"></div>
-						<div data-bind="text: outflowDecoder.plainText[2], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 2}" class="small"></div>
-						<div data-bind="text: outflowDecoder.plainText[3], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 3}" class="small"></div>
-						<div data-bind="text: outflowDecoder.plainText[4], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 4}" class="small"></div>
-						<div data-bind="text: outflowDecoder.plainText[5], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 5}" class="small"></div>
-						<div data-bind="text: outflowDecoder.plainText[6], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 6}" class="small"></div>
-						<div data-bind="text: outflowDecoder.plainText[7], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 7}" class="small"></div>
+						<input type="checkbox" data-bind="checked: displays.restoreSemantics" />Restore semantics?
+						<div data-bind="style: {visibility: displays.restoreSemantics() ? 'visible' : 'hidden'}">
+							<div data-bind="text: outflowDecoder.plainText[0], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 0}"></div>
+							<div data-bind="text: outflowDecoder.plainText[1], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 1}" class="small"></div>
+							<div data-bind="text: outflowDecoder.plainText[2], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 2}" class="small"></div>
+							<div data-bind="text: outflowDecoder.plainText[3], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 3}" class="small"></div>
+							<div data-bind="text: outflowDecoder.plainText[4], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 4}" class="small"></div>
+							<div data-bind="text: outflowDecoder.plainText[5], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 5}" class="small"></div>
+							<div data-bind="text: outflowDecoder.plainText[6], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 6}" class="small"></div>
+							<div data-bind="text: outflowDecoder.plainText[7], css: {'small': true, 'nogibberish': outflowDecoder.minGibberishIndex() == 7}" class="small"></div>
+						</div>
 					</div>
 				</td>
 			</tr>
@@ -85,11 +96,13 @@
 						<table>
 							<tr>
 								<td>
+									<input type="checkbox" data-bind="checked: displays.recordII" />Record?<br/>							
 									<canvas id="shapeC" width="510" height="310">
 									</canvas>
 								</td>
 								<td>
-									<div style="margin-left: 10px;">
+									<input type="checkbox" data-bind="checked: displays.analyze" />Analyze?								
+									<div style="margin-left: 10px;" data-bind="visible: displays.analyze">
 										<!-- ko foreach: shapeDecoder.guesses -->
 										<span data-bind="html: name, style: {color: color}"></span><br/>
 										<!-- /ko -->
@@ -104,15 +117,18 @@
 			<tr>
 				<td style="vertical-align: bottom">
 					<div class="box">
-						<div id="graph" style="width:95%;">
-						</div>
-						<div>
-							<input type="checkbox" data-bind="checked: outflowDecoder.showv"/><span style="color: blue">v(t) [m/s]</span>,
-							<input type="checkbox" data-bind="checked: outflowDecoder.showh"/><span style="color: orange">h(t) = v²(t) / (2 * g) [m]</span>,
-							<input type="checkbox" data-bind="checked: outflowDecoder.showV"/><span style="color: green">V(t) = 2 * <span style="font-size:1.5em">∫</span><sub>0</sub><sup style="margin-left:-7px;">h(t)</sup> r(x) dx [m²]</span>,<br/>
-							<input type="checkbox" data-bind="checked: outflowDecoder.showdV"/><span style="color: yellow">ΔV(t) = V(t) - V(t-1)</span>,
-							<input type="checkbox" data-bind="checked: outflowDecoder.showdVo"/><span style="color: red">ΔV<sub>out</sub>(t) = v(t) * 2 * r(0) * dt</span>,
-							<input type="checkbox" data-bind="checked: outflowDecoder.showdVi"/><span style="color: purple">ΔV<sub>in</sub>(t) = ΔV(t) + ΔV<sub>out</sub>(t)</span>
+						<input type="checkbox" data-bind="checked: displays.record" />Record?
+						<div data-bind="style: {visibility: displays.record() ? 'visible' : 'hidden'}">
+							<div id="graph" style="width:95%;">
+							</div>
+							<div>
+								<input type="checkbox" data-bind="checked: outflowDecoder.showv"/><span style="color: blue">v(t) [m/s]</span>,
+								<input type="checkbox" data-bind="checked: outflowDecoder.showh"/><span style="color: orange">h(t) = v²(t) / (2 * g) [m]</span>,
+								<input type="checkbox" data-bind="checked: outflowDecoder.showV"/><span style="color: green">V(t) = 2 * <span style="font-size:1.5em">∫</span><sub>0</sub><sup style="margin-left:-7px;">h(t)</sup> r(x) dx [m²]</span>,<br/>
+								<input type="checkbox" data-bind="checked: outflowDecoder.showdV"/><span style="color: yellow">ΔV(t) = V(t) - V(t-1)</span>,
+								<input type="checkbox" data-bind="checked: outflowDecoder.showdVo"/><span style="color: red">ΔV<sub>out</sub>(t) = v(t) * 2 * r(0) * dt</span>,
+								<input type="checkbox" data-bind="checked: outflowDecoder.showdVi"/><span style="color: purple">ΔV<sub>in</sub>(t) = ΔV(t) + ΔV<sub>out</sub>(t)</span>
+							</div>
 						</div>
 					</div>
 				</td>

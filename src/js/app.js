@@ -83,10 +83,12 @@ function App() {
 
 			ctx.fillRect(cx - r - 117, 0, 2 * r, cy - self.funnel.height());
 			
-			ctx.save();
-			self.paintFunnel(ctx, cx, cy, self.funnel.height(), self.funnel.radius, self.context.clip);
-			ctx.fillRect(cx - r - 117, 0, 2 * r, cy - height);
-			ctx.restore();
+			if (self.displays.funnel()) {
+				ctx.save();
+				self.paintFunnel(ctx, cx, cy, self.funnel.height(), self.funnel.radius, self.context.clip);
+				ctx.fillRect(cx - r - 117, 0, 2 * r, cy - height);
+				ctx.restore();
+			}
 		}
 	}
 	
@@ -100,14 +102,18 @@ function App() {
 		self.context.lineWidth = 0;
 		self.context.strokeStyle = "none";
 		self.context.fillStyle = "blue";
-		self.paintFunnel(self.context, cx, cy, self.fillHeight, self.funnel.radius, self.context.fill);
-
+		if (self.displays.funnel()) {
+			self.paintFunnel(self.context, cx, cy, self.fillHeight, self.funnel.radius, self.context.fill);
+		}
+		
 		self.paintInflow(cx, cy, self.context, self.fillHeight);
 		self.paintOutflow(cx, cy, self.context, self.funnel.radius(0));
 
 		self.context.lineWidth = 2;
 		self.context.strokeStyle = "white";
-		self.paintFunnel(self.context, cx, cy, self.funnel.height(), self.funnel.radius, self.context.stroke);
+		if (self.displays.funnel()) {
+			self.paintFunnel(self.context, cx, cy, self.funnel.height(), self.funnel.radius, self.context.stroke);
+		}
 		
 	};
 	
@@ -194,6 +200,18 @@ function App() {
 	
 	this.encodedMessage = "";
 	
+	this.displays = {
+		
+		funnel: ko.observable(true),
+		message: ko.observable(false),
+		measure: ko.observable(false),
+		record: ko.observable(false),
+		restoreSemantics: ko.observable(false),
+		recordII: ko.observable(false),
+		analyze: ko.observable(false)
+		
+	};
+	
 }
 
 $(function () {
@@ -205,7 +223,7 @@ $(function () {
 	od.init("graph");
 	od.funnel = app.funnel;
 	
-	var sd = new ShapeDecoder(app.dt);
+	var sd = new ShapeDecoder(app.dt, app.displays);
 	app.shapeDecoder = sd;
 	
 	app.funnel.rofh.subscribe(function () {

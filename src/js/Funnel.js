@@ -14,6 +14,7 @@ function Funnel() {
 	this.rofh = ko.observable("h*h*h * 0.00002 + h*h * 0.0002");
 	
 	this.prototypes = [
+		"h*h*h * 0.00002 + h*h * 0.0002",
 		"Math.sqrt(h) * 15",
 		"(Math.floor(h / 100)) * 100",
 		"h < 30 ? 200 : h > 250 ? 200 : 1",
