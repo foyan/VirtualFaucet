@@ -2,7 +2,7 @@ function App() {
 	
 	var self = this;
 	
-	this.chartSource = null;
+	this.outflowDecoder = null;
 	
 	this.funnel = new Funnel();
 	
@@ -161,10 +161,10 @@ function App() {
 			self.formattedFillHeight("2 * <span style=\"font-size:1.5em\">∫</span><sub>0</sub><sup style=\"margin-left:-9px;\">h(t)</sup>  r(x) dx = V => h = " + self.fillHeight.toFixed(3) + " m");
 		}
 		
-		self.chartSource.add(self.playCount, self.outflowVelocity);
+		self.outflowDecoder.add(self.playCount, self.outflowVelocity);
 				
 		if (self.playCount % 5 == 0) {
-			self.chartSource.draw();
+			self.outflowDecoder.draw();
 		}
 		
 		self.playCount++;
@@ -189,10 +189,10 @@ $(function () {
 	var app = new App();
 	app.paint();
 	
-	var cs = new ChartSource(app.dt);
-	app.chartSource = cs;
-	cs.init("graph");
-	cs.funnel = app.funnel;
+	var od = new OutflowDecoder(app.dt);
+	app.outflowDecoder = od;
+	od.init("graph");
+	od.funnel = app.funnel;
 	
 	ko.applyBindings(app);
 	
