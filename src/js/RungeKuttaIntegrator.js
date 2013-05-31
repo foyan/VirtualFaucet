@@ -3,13 +3,17 @@ function RungeKuttaIntegrator() {
 	var self = this;
 	
 	this.bogackiShampine = function (y0, t0, y, end, h, tol, breakonY) {
-		
-		h = h || 0.01; 
+
+		h = h || 0.01;
 		tol = tol || 0.00001;
+
+		//console.log("entering bogackiShampine(y0="+ y0 + ", t0="+t0+", end=" + end + ", h=" + h + ", tol=" + tol +", breakonY=" + breakonY +")" );
+
 		var tn = t0;
 		var yn = y0;
 		var tnm1 = t0;
 		var ynm1 = y0;
+		var n = 0;
 		
 		while ((!breakonY && tn < end) || (breakonY && yn < end)) {
 			var R = 1.0;
@@ -38,32 +42,43 @@ function RungeKuttaIntegrator() {
 				}
 				
 				tn2 = tn + h;
-				h = 0.8 * h * Math.pow(tol / R, 1.0/3.0);
+				h = Math.min(5.0, 0.8 * h * Math.pow(tol / R, 1.0/3.0));
+				
+				n++;
 			}
 			
 			yn = yn2;
 			tn = tn2;
 		}
 		
-		return {
+		//console.log("exiting bogackiShampine(), n="+n);
+		var ret = {
 			y: yn,
 			ym1: ynm1,
 			t: tn,
 			tm1: tnm1
 		};
 		
+		//console.log(ret);
+		
+		return ret;
+		
 	}
 	
 	this.rungeKutta4 = function (y0, t0, y, tend, factor) {
 		
+		//console.log("entering rungeKutta4(y0="+ y0 + ", t0="+t0+", tend=" + tend + ", factor=" +factor +")" );
+
 		factor = factor || 0.001;
 		var h = (tend - t0) * factor;
 		var tn = t0;
 		var yn = y0;
 		var tnm1 = t0;
 		var ynm1 = y0;
+		var n = 0;
+		var maxN = 1 / factor + 2;
 		
-		while (tn < tend) {
+		while (Math.abs(tn - tend) > 0.000000001 && n < maxN) {
 			tnm1 = tn;
 			ynm1 = yn;
 			
@@ -74,8 +89,12 @@ function RungeKuttaIntegrator() {
 			
 			tn += h;
 			yn += 1.0/6.0 * h * (k1 + 2 * k2 + 2 * k3 + k4);
+			
+			n++;
 		}
 		
+		//console.log("exiting rungeKutta4(), n="+n);
+
 		return {
 			y: yn,
 			ym1 : ynm1,
@@ -97,7 +116,7 @@ function RungeKuttaIntegrator() {
 		var tend = r.t;
 		var y0 = r.ym1;
 		
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < 5; i++) {
 			r2 = self.rungeKutta4(y0, t0, y, tend, 0.5);
 			if (r2.ym1 > yend) {
 				tend = r2.tm1;

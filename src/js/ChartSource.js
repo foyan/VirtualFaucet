@@ -52,13 +52,14 @@ function ChartSource(dt) {
 	this.prevv = 0;
 	
 	this.add = function (x, v) {
+		
 		var h = v > 0 ? v * v / 2.0 / 9.81 : 0;
 
 		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2;
 
 		var dVo = self.prevv * self.funnel.radius(0) * 2 * dt;
 		var dVi = V - self.prevV + dVo;
-				
+		
 		self.x.push(x * dt);
 		self.v.push(v);
 		self.h.push(h);
@@ -73,7 +74,7 @@ function ChartSource(dt) {
 		self.dVo.shift();
 		self.dVi.shift();
 		
-		var bit = V > self.prevV ? 1 : 0;
+		var bit = dVi > 90.0;
 		self.prevV = V;
 		self.prevv = v;
 		
