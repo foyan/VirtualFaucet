@@ -54,11 +54,11 @@
 						<canvas id="vf" width="500" height="500">
 						</canvas>
 						
-						<div class="coolResult" data-bind="text: formattedVolume" style="text-align:center;">
+						<div class="coolResult" data-bind="html: formattedOutflowVelocity" style="text-align:center;">
 						</div>
-						<div class="coolResult" data-bind="text: formattedFillHeight" style="text-align:center;">
+						<div class="coolResult" data-bind="html: formattedFillHeight" style="text-align:center;">
 						</div>
-						<div class="coolResult" data-bind="text: formattedOutflowVelocity" style="text-align:center;">
+						<div class="coolResult" data-bind="html: formattedVolume" style="text-align:center;">
 						</div>
 			
 					</div>
@@ -85,9 +85,10 @@
 						<div>
 							<input type="checkbox" data-bind="checked: chartSource.showv"/><span style="color: blue">v(t) [m/s]</span>,
 							<input type="checkbox" data-bind="checked: chartSource.showh"/><span style="color: orange">h(t) = v²(t) / (2 * g) [m]</span>,
-							<input type="checkbox" data-bind="checked: chartSource.showV"/><span style="color: green">V(t) = 2 * Int_0^h(t) r(x) dx [m²]</span>,<br/>
-							<input type="checkbox" data-bind="checked: chartSource.showdVo"/><span style="color: red">ΔV_out(t) = v(t) * 2 * r(0) * dt</span>,
-							<input type="checkbox" data-bind="checked: chartSource.showdVi"/><span style="color: purple">ΔV_in(t) = V(t) - V(t-1) - ΔV_out(t)</span>
+							<input type="checkbox" data-bind="checked: chartSource.showV"/><span style="color: green">V(t) = 2 * <span style="font-size:1.5em">∫</span><sub>0</sub><sup style="margin-left:-7px;">h(t)</sup> r(x) dx [m²]</span>,<br/>
+							<input type="checkbox" data-bind="checked: chartSource.showdV"/><span style="color: yellow">ΔV(t) = V(t) - V(t-1)</span>,
+							<input type="checkbox" data-bind="checked: chartSource.showdVo"/><span style="color: red">ΔV<sub>out</sub>(t) = v(t) * 2 * r(0) * dt</span>,
+							<input type="checkbox" data-bind="checked: chartSource.showdVi"/><span style="color: purple">ΔV<sub>in</sub>(t) = ΔV(t) + ΔV<sub>out</sub>(t)</span>
 						</div>
 					</div>
 				</td>

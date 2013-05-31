@@ -58,7 +58,7 @@ function App() {
 	
 	this.fillHeight = 0;
 	
-	this.formattedFillHeight = ko.observable("2 * Int_0^h r(x) dx = V => h = 0.000 m");
+	this.formattedFillHeight = ko.observable("2 * <span style=\"font-size:1.5em\">∫</span><sub>0</sub><sup style=\"margin-left:-7px;\">h(t)</sup>  r(x) dx = V => h = 0.000 m");
 	
 	this.calculateFillHeight = function () {
 		self.fillHeight = self.integrator.integrateReverse(0, 0, self.funnel.radius, self.volume / 2);
@@ -158,7 +158,7 @@ function App() {
 		if (self.playCount % 2 == 0) {
 			self.formattedOutflowVelocity("v(h) = sqrt(2gh) = " + (self.outflowVelocity).toFixed(3) + " m/s");
 			self.formattedVolume("V = " + self.volume.toFixed(2) + " m²");
-			self.formattedFillHeight("2 * Int_0^h r(x) dx = V => h = " + self.fillHeight.toFixed(3) + " m");
+			self.formattedFillHeight("2 * <span style=\"font-size:1.5em\">∫</span><sub>0</sub><sup style=\"margin-left:-9px;\">h(t)</sup>  r(x) dx = V => h = " + self.fillHeight.toFixed(3) + " m");
 		}
 		
 		self.chartSource.add(self.playCount, self.outflowVelocity);

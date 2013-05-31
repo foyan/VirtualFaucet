@@ -7,6 +7,7 @@ function ChartSource(dt) {
 	this.v = [];
 	this.h = [];
 	this.V = [];
+	this.dV = [];
 	this.dVo = [];
 	this.dVi = [];
 	
@@ -25,15 +26,17 @@ function ChartSource(dt) {
 		this.v.push(0);
 		this.h.push(0);
 		this.V.push(0);
+		this.dV.push(0);
 		this.dVo.push(0);
 		this.dVi.push(0);
 	}
 	
 	this.showv = ko.observable(true);
-	this.showh = ko.observable(true);
-	this.showV = ko.observable(true);
-	this.showdVo = ko.observable(true);
-	this.showdVi = ko.observable(true);
+	this.showh = ko.observable(false);
+	this.showV = ko.observable(false);
+	this.showdV = ko.observable(false);
+	this.showdVo = ko.observable(false);
+	this.showdVi = ko.observable(false);
 	
 	this.integrator = new RungeKuttaIntegrator();
 	this.funnel = null;
@@ -57,13 +60,15 @@ function ChartSource(dt) {
 
 		var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2;
 
+		var dV = V - self.prevV;
 		var dVo = self.prevv * self.funnel.radius(0) * 2 * dt;
-		var dVi = V - self.prevV + dVo;
+		var dVi = dV + dVo;
 		
 		self.x.push(x * dt);
 		self.v.push(v);
 		self.h.push(h);
 		self.V.push(V / 10.0);
+		self.dV.push(dV);
 		self.dVo.push(dVo);
 		self.dVi.push(dVi);
 				
@@ -71,6 +76,7 @@ function ChartSource(dt) {
 		self.v.shift();
 		self.h.shift();
 		self.V.shift();
+		self.dV.shift();
 		self.dVo.shift();
 		self.dVi.shift();
 		
@@ -145,6 +151,10 @@ function ChartSource(dt) {
 		if (self.showV()) {
 			series.push(self.V);
 			colors.push("green");
+		}
+		if (self.showdV()) {
+			series.push(self.dV);
+			colors.push("yellow")
 		}
 		if (self.showdVo()) {
 			series.push(self.dVo);
