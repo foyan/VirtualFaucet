@@ -75,10 +75,10 @@ function ShapeDecoder(dt) {
 	}
 	
 	this.guesses = [
-		new Guess(LinearRegression.Polynomial([1, 1, 1, 1]), "blue"),
-		new Guess(LinearRegression.Polynomial([0, 0, 1, 1]), "orange"),
-		new Guess(LinearRegression.Polynomial([1, 1, 1]), "green"),
-		new Guess(LinearRegression.Polynomial([1, 1]), "yellow")
+		new Guess(LinearRegression.Polynomial([3, 2, 1, 0]), "blue"),
+		new Guess(LinearRegression.Polynomial([3, 2]), "orange"),
+		new Guess(LinearRegression.Polynomial([2, 1, 0]), "green"),
+		new Guess(LinearRegression.Polynomial([1, 0]), "yellow")
 	];
 	
 	function Guess(mode, color) {

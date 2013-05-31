@@ -126,18 +126,16 @@ function LinearRegression() {
 	
 }
 
-LinearRegression.Polynomial = function (weights) {
-	
-	var coeffCount = $.map(weights, function (w) { return w != 0 ? w : null}).length;
-		
+LinearRegression.Polynomial = function (exponents) {
+			
 	return {
 		
 		getA: function(u) {
 			var a = [];
 			for (var i = 0; i < u.length; i++) {
 				a[i] = [];
-				for (var j = 0; j <= grade; j++) {
-					a[i][j] = Math.pow(u[i], j);
+				for (var j = 0; j < exponents.length; j++) {
+					a[i][j] = Math.pow(u[i], exponents[i]);
 				}
 			}
 			return a;
@@ -154,7 +152,7 @@ LinearRegression.Polynomial = function (weights) {
 		getFunction: function (x) {
 			var fs = $.map(x, function (xi, i) {
 				return function (u) {
-					return xi * Math.pow(u, i);
+					return xi * Math.pow(u, exponents[i]);
 				}
 			});
 			return function (u) {
@@ -169,14 +167,22 @@ LinearRegression.Polynomial = function (weights) {
 		describe: function (x) {
 			var coeffChars = "αβγδεζηθ";
 			var s = "";
-			for (var i = grade; i > 0; --i) {
-				s += (x != null ? x[i].toFixed(7) : coeffChars[i]) + "*x<sup>" + (i > 1 ? i : "") + "</sup> + ";
+			var sgn = x && x[0] < 0 ? "-" : "";
+			for (var i = 0; i < exponents.length; i++) {
+				var coe = x ? Math.abs(x[i].toFixed(7)) : coeffChars[i];
+				var sgn = i == 0 ? "" : " + ";
+				if (x && x[i] < 0) {
+					sgn = i == 0 ? "-" : " - ";
+				}
+				var variable = exponents[i] == 0 ? "" : "x";
+				var exp = exponents[i] != 1 && exponents[i] != 0 ? ("<sup>" + exponents[i] + "</sup>") : "";
+				
+				s += sgn + coe + variable + exp;
 			}
-			s += (x != null ? x[0].toFixed(7) : coeffChars[i]);
 			return s;
 		},
 		
-		coeffs: coeffCount
+		coeffs: exponents.length
 		
 	};
 	
