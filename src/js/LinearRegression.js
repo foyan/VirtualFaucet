@@ -126,6 +126,44 @@ function LinearRegression() {
 	
 }
 
+LinearRegression.Root = function() {
+	
+	// y = sqrt(a*x)
+	// y^2 = a*x
+	return {
+		
+		getA: function(u) {
+			var a = [];
+			for (var i = 0; i < u.length; i++) {
+				a[i] = [u[i]];
+			}
+			return a;
+		},
+		
+		getB: function (v) {
+			var b = [];
+			for (var i = 0; i < v.length; i++) {
+				b[i] = v[i] * v[i];
+			}
+			return b;
+		},
+		
+		getFunction: function (x) {
+			return function (u) {
+				return Math.sqrt(u * x[0]);
+			}
+		},
+		
+		describe: function (x) {
+			return "sqrt(" + (x ? Math.sqrt(x[0]).toFixed(7) : "α") + "x)";
+		},
+		
+		coeffs: 1
+		
+	}
+	
+};
+
 LinearRegression.Polynomial = function (exponents) {
 			
 	return {
@@ -135,7 +173,7 @@ LinearRegression.Polynomial = function (exponents) {
 			for (var i = 0; i < u.length; i++) {
 				a[i] = [];
 				for (var j = 0; j < exponents.length; j++) {
-					a[i][j] = Math.pow(u[i], exponents[i]);
+					a[i][j] = Math.pow(u[i], exponents[j]);
 				}
 			}
 			return a;
