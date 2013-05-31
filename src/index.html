@@ -82,9 +82,21 @@
 			<tr>
 				<td>
 					<div class="box">
-						<input type="button" value="Guess" data-bind="click: shapeDecoder.guess" />
-						<canvas id="shapeC" width="510" height="310">
-						</canvas>
+						<table>
+							<tr>
+								<td>
+									<canvas id="shapeC" width="510" height="310">
+									</canvas>
+								</td>
+								<td>
+									<div style="margin-left: 10px;">
+										<!-- ko foreach: shapeDecoder.guesses -->
+										<span data-bind="html: name, style: {color: color}"></span><br/>
+										<!-- /ko -->
+									</div>
+								</td>
+							</tr>
+						</table>
 					</div>
 				</td>
 			</tr>

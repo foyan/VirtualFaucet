@@ -2,7 +2,7 @@ function LinearRegression() {
 	
 	var self = this;
 	
-	this.calculateFunction = function (u, v, mode) {
+	this.calculate = function (u, v, mode) {
 		
 		var vs = [];
 		
@@ -11,10 +11,11 @@ function LinearRegression() {
 		var b = mode.getB(v);
 		var Qb = self.transformB(b, vs, mode.coeffs);
 		var x = self.solve(Qb, R, mode.coeffs);
-		
-		console.log(x);
-		
-		return mode.getFunction(x);
+				
+		return {
+			x: x,
+			func: mode.getFunction(x)
+		};
 		
 	}
 	
@@ -125,8 +126,10 @@ function LinearRegression() {
 	
 }
 
-LinearRegression.Polynomial = function (grade) {
+LinearRegression.Polynomial = function (weights) {
 	
+	var coeffCount = $.map(weights, function (w) { return w != 0 ? w : null}).length;
+		
 	return {
 		
 		getA: function(u) {
@@ -160,13 +163,22 @@ LinearRegression.Polynomial = function (grade) {
 					s += fs[i](u);
 				}
 				return s;
-			}
+			};
 		},
 		
-		coeffs: grade + 1
+		describe: function (x) {
+			var coeffChars = "αβγδεζηθ";
+			var s = "";
+			for (var i = grade; i > 0; --i) {
+				s += (x != null ? x[i].toFixed(7) : coeffChars[i]) + "*x<sup>" + (i > 1 ? i : "") + "</sup> + ";
+			}
+			s += (x != null ? x[0].toFixed(7) : coeffChars[i]);
+			return s;
+		},
+		
+		coeffs: coeffCount
 		
 	};
 	
 }
 
-var foo = null;

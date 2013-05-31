@@ -39,6 +39,9 @@ function ShapeDecoder(dt) {
 	this.clear = function () {
 		this.x = [0];
 		this.y = [0];
+		for (var i = 0; i < self.guesses.length; i++) {
+			self.guesses[i].func = null;
+		}
 	}
 	
 	this.draw = function () {
@@ -47,32 +50,58 @@ function ShapeDecoder(dt) {
 		}
 		
 		self.context.clearRect(0, 0, self.canvas.width, self.canvas.height);
-		if (self.regressionFunction) {
-			self.context.strokeStyle = "blue";
-			
-			self.context.beginPath();
-			self.context.moveTo(self.canvasWidth / 2 - self.regressionFunction(self.canvasHeight), 0);
-			for (var i = self.canvasHeight - 1; i >= 0; --i) {
-				self.context.lineTo(self.canvasWidth / 2 - self.regressionFunction(i), self.canvasHeight - i);
+		for (var g = 0; g < self.guesses.length; g++) {
+			var guess = self.guesses[g];
+			if (guess.func) {
+				self.context.strokeStyle = guess.color;
+				
+				self.context.beginPath();
+				self.context.moveTo(self.canvasWidth / 2 - guess.func(self.canvasHeight), 0);
+				for (var i = self.canvasHeight - 1; i >= 0; --i) {
+					self.context.lineTo(self.canvasWidth / 2 - guess.func(i), self.canvasHeight - i);
+				}
+				for (var i = 0; i < self.canvasHeight; i++) {
+					self.context.lineTo(self.canvasWidth / 2 + guess.func(i), self.canvasHeight - i);
+				}
+				
+				self.context.stroke();
 			}
-			for (var i = 0; i < self.canvasHeight; i++) {
-				self.context.lineTo(self.canvasWidth / 2 + self.regressionFunction(i), self.canvasHeight - i);
-			}
-			
-			self.context.stroke();
 		}
 		for (var i = 0; i < self.x.length; i++) {
-			self.context.fillStyle = "red";
-			self.context.fillRect(self.canvasWidth / 2 - self.y[i], self.canvasHeight - 1 - self.x[i], 1, 1);
-			self.context.fillRect(self.canvasWidth / 2 + self.y[i], self.canvasHeight - 1 - self.x[i], 1, 1);
+			self.context.fillStyle = "white";
+			self.context.fillRect(self.canvasWidth / 2 - self.y[i], self.canvasHeight - 1 - self.x[i], 3, 3);
+			self.context.fillRect(self.canvasWidth / 2 + self.y[i], self.canvasHeight - 1 - self.x[i], 3, 3);
 		}
 	}
 	
-	this.regressionFunction = null;
+	this.guesses = [
+		new Guess(LinearRegression.Polynomial([1, 1, 1, 1]), "blue"),
+		new Guess(LinearRegression.Polynomial([0, 0, 1, 1]), "orange"),
+		new Guess(LinearRegression.Polynomial([1, 1, 1]), "green"),
+		new Guess(LinearRegression.Polynomial([1, 1]), "yellow")
+	];
 	
+	function Guess(mode, color) {
+		
+		var sself = this;
+		
+		this.mode = mode;
+		this.x = ko.observable(null);
+		this.func = null;
+		this.name = ko.computed(function () {
+			return sself.mode.describe(sself.x());
+		});
+		this.color = color;
+		
+	}
+		
 	this.guess = function () {
 		var reg = new LinearRegression();
-		self.regressionFunction = reg.calculateFunction(self.x, self.y, LinearRegression.Polynomial(3));
+		for (var i = 0; i < self.guesses.length; i++) {
+			var res = reg.calculate(self.x, self.y, self.guesses[i].mode);
+			self.guesses[i].func = res.func;
+			self.guesses[i].x(res.x);
+		}
 	}
 	
 }
