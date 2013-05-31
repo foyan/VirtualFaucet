@@ -54,7 +54,7 @@ function OutflowDecoder(dt) {
 	this.prevV = 0;
 	this.prevv = 0;
 	
-	this.add = function (x, v) {
+	this.report = function (x, v) {
 		
 		var h = v > 0 ? v * v / 2.0 / 9.81 : 0;
 
@@ -67,7 +67,7 @@ function OutflowDecoder(dt) {
 		self.x.push(x * dt);
 		self.v.push(v);
 		self.h.push(h);
-		self.V.push(V / 10.0);
+		self.V.push(V);
 		self.dV.push(dV);
 		self.dVo.push(dVo);
 		self.dVi.push(dVi);

@@ -3,9 +3,10 @@ function App() {
 	var self = this;
 	
 	this.outflowDecoder = null;
+	this.shapeDecoder = null;
 	
 	this.funnel = new Funnel();
-	
+		
 	this.canvas = $("#vf").get(0);
 	
 	this.canvasWidth = self.canvas.width;
@@ -14,15 +15,17 @@ function App() {
 	this.context = self.canvas.getContext("2d");
 	
 	this.volume = 0;
-	this.formattedVolume = ko.observable("V = 0.00 m²")
+	this.formattedVolume = ko.observable("V = 0.00 m²");
 	
 	this.integrator = new RungeKuttaIntegrator(); 
 	
 	this.lastInflow = 0;
+	this.lastVisualInflow = 0;
 	
 	this.tap = function() {
 		self.volume += 200;
 		self.lastInflow = 200;
+		self.lastVisualInflow = 200;
 		self.paint();
 	}
 	
@@ -73,7 +76,7 @@ function App() {
 	}
 	
 	this.paintInflow = function (cx, cy, ctx, height) {
-		if (self.lastInflow > 0) {
+		if (self.lastVisualInflow > 0) {
 			ctx.strokeStyle = "none";
 			ctx.fillStyle = "blue";
 			var r = Math.sqrt(self.lastInflow) / 2;
@@ -126,10 +129,13 @@ function App() {
 	
 	this.flowOut = function () {
 		self.outflowVelocity = Math.sqrt(2*9.81*self.fillHeight);
-		self.volume -= Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity * self.dt);
+		self.lastOutflow = Math.min(self.volume, 2 * self.funnel.radius(0) * self.outflowVelocity * self.dt);
+		self.volume -= self.lastOutflow;
 	}
 	
 	this.playCount = 0;
+	
+	this.lastOutflow = 0;
 	
 	this.play = function () {
 		
@@ -143,14 +149,15 @@ function App() {
 		if (self.fullThrottle()) {
 			self.volume += 200;
 			self.lastInflow = 200;
+			self.lastVisualInflow = 200;
 		}
 		
 		self.calculateFillHeight();
 		self.flowOut();
 		self.calculateFillHeight();
 		
-		if (self.playCount % 3 == 0) {
-			self.lastInflow = 0;
+		if (self.playCount % 3 == 0 && !self.fullThrottle()) {
+			self.lastVisualInflow = 0;
 		}
 		
 		self.paint();
@@ -161,16 +168,20 @@ function App() {
 			self.formattedFillHeight("2 * <span style=\"font-size:1.5em\">∫</span><sub>0</sub><sup style=\"margin-left:-9px;\">h(t)</sup>  r(x) dx = V => h = " + self.fillHeight.toFixed(3) + " m");
 		}
 		
-		self.outflowDecoder.add(self.playCount, self.outflowVelocity);
+		self.outflowDecoder.report(self.playCount, self.outflowVelocity);
+		self.shapeDecoder.report(self.lastInflow, self.lastOutflow, self.outflowVelocity);
 				
 		if (self.playCount % 5 == 0) {
 			self.outflowDecoder.draw();
+			self.shapeDecoder.draw();
 		}
+		
+		self.lastInflow = 0;
 		
 		self.playCount++;
 	}
 	
-	this.message = ko.observable("Fauceteering brings fresh possibilities to espionage communications.");
+	this.message = ko.observable("Fauceteering brings fresh possibilities to espionage communications. Beware of the thrilling vibra slap.");
 	
 	this.encode = function () {
 		var enc = "";
@@ -193,6 +204,13 @@ $(function () {
 	app.outflowDecoder = od;
 	od.init("graph");
 	od.funnel = app.funnel;
+	
+	var sd = new ShapeDecoder(app.dt);
+	app.shapeDecoder = sd;
+	
+	app.funnel.rofh.subscribe(function () {
+		app.shapeDecoder.clear();
+	});
 	
 	ko.applyBindings(app);
 	
