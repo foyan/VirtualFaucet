@@ -50,4 +50,9 @@ function ShapeDecoder(dt) {
 		}
 	}
 	
+	this.guess = function () {
+		var reg = new LinearRegression();
+		var x = reg.calculateFunction(self.x, self.y, LinearRegression.Polynomial(3));
+	}
+	
 }

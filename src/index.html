@@ -18,6 +18,7 @@
 		
 		<script type="text/javascript" src="js/Funnel.js"></script>
 		<script type="text/javascript" src="js/RungeKuttaIntegrator.js"></script>
+		<script type="text/javascript" src="js/LinearRegression.js"></script>
 		<script type="text/javascript" src="js/OutflowDecoder.js"></script>
 		<script type="text/javascript" src="js/ShapeDecoder.js"></script>
 		<script type="text/javascript" src="js/app.js"></script>
@@ -81,6 +82,7 @@
 			<tr>
 				<td>
 					<div class="box">
+						<input type="button" value="Guess" data-bind="click: shapeDecoder.guess" />
 						<canvas id="shapeC" width="510" height="310">
 						</canvas>
 					</div>
