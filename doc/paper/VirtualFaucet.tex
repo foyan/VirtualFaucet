@@ -174,14 +174,58 @@ Bei gegebener Eingabe und bekannter Syntax ist die Ermittlung der Ausgabe trivia
 Bei gegebener Ausgabe und bekannter Syntax gestaltet sich die Ermittlung der Eingabe folgendermassen:
 
 \begin{enumerate}
-\item Ermittle 
+\item Ermittle die Pegelhöhe $h$ innerhalb des Trichters mit der Umkehrung des Torricellischen Gesetzes:
+\[
+	h(t) = \frac {v^2(t)}{2\cdot g}
+\]
+\item Ermittle das Volumen des sich momentan im Trichter befindenden Wassers durch Integration über $r(h)$:
+\[
+	V(t) = 2\cdot \int\limits_0^{h(t)} r(x) dx
+\]
+sowie das ausgeflossene Volumen durch
+\[
+	\Delta V_\text{out}(t) = 2\cdot v(t) \cdot r(0) \cdot \Delta t.
+\]
+\item Ermittle die totale Änderung des Volumens durch
+\[
+	\Delta V(t) = V_t - V_{t-\Delta t}
+\]
+sowie daraus folgend das vom Wasserhahn in den Trichter geflossene Volumen durch
+\[
+	\Delta V_\text{in}(t) = \Delta V(t) + \Delta V_\text{out}(t).
+\]
 \end{enumerate}
 
 \section{Ermittlung der Syntax}
 
+Dies ist der schwierigste Teil. Bei gegebener Eingabe $\Delta V_\text{in}(t)$ und gegebenen Ausgaben $v(t)$ und $\Delta V_\text{out}(t)$ (sowie daraus abgeleitet der Höhe $h(t) = \frac {v^2(t)}{2\cdot g}$) ergeben sich die Messpunkte $\tilde r$ durch
+\[
+	\tilde r(h(t)) = \frac {\Delta V_t}{2 \cdot \Delta h_t} = \frac {\Delta V_\text{in}(t)-\Delta V_\text{out}(t)} {2 \cdot h(t) - h(t-\Delta t)}.
+\]
+
+Die notwendige analytische Beschreibung der Syntax kann in beschränktem Masse durch Regression erreicht werden.
+
 \chapter{Bemerkungen zur Implementation}
 
 \section{Umgebung}
+
+Das verwendete Programmierumfeld ist HTML und JavaScript. Dadurch ist gewährleistet, dass das Programm auf allen möglichen Plattformen lauffähig ist. Ausserdem verlangt die sinnvolle Umsetzung der Thematik ein relativ stark ausgebautes User Interface zur Illustration. Dies ist mit HTML relativ einfach und mit geringem Aufwand möglich.
+
+Alternativen wurden bewusst nicht evaluiert.
+
+
+Die eingesetzten JavaScript-Libraries sind:
+\begin{itemize}
+\item {\tt jQuery} \cite{lib:jquery} zur Vereinfachung einiger DOM-Operationen sowie wegen einiger nützlicher Routinen zur funktionialen Programmierung wie {\tt \$.map()} und {\tt \$.grep()},
+\item {\tt gRaphaël} \cite{lib:graphael} für die Plots,
+\item {\tt knockout.js} \cite{lib:knockout} für das einfache Binding von Modell und User Interface.
+\end{itemize}
+
+\section{Architektur}
+
+Als Komponentendiagramm sieht die Architektur des Programms folgendermassen aus:
+
+\includegraphics[scale=0.5]{biltli/architecture.pdf}
 
 \chapter{Schlussfolgerungen}
 
