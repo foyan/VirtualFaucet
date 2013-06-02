@@ -213,6 +213,7 @@ Das verwendete Programmierumfeld ist HTML und JavaScript. Dadurch ist gewährlei
 
 Alternativen wurden bewusst nicht evaluiert.
 
+\section{Libraries}
 
 Die eingesetzten JavaScript-Libraries sind:
 \begin{itemize}
@@ -223,9 +224,112 @@ Die eingesetzten JavaScript-Libraries sind:
 
 \section{Architektur}
 
-Als Komponentendiagramm sieht die Architektur des Programms folgendermassen aus:
+Die Architektur des Programms ist in Abbildung \ref{architecture} skizziert. In den folgenden Abschnitten werden die Komponenten kurz erläutert und wo notwendig, interessant und/oder sinnvoll Kommentare zum Code abgegeben.
 
+\begin{figure}
+\caption{Architektur}
+\label{architecture}
+\begin{center}
 \includegraphics[scale=0.5]{biltli/architecture.pdf}
+\end{center}
+\end{figure}
+
+
+\subsection{{\tt App}}
+
+Diese Klasse hält den momentanen Zustand des Modells. Ausserdem ist sie verantwortlich für das Zeichnen des Trichters sowie weiter Teile des User Interfaces.
+
+\subsection{{\tt Funnel}}
+
+Diese Klasse definiert den Trichter. Sie besteht mehr oder weniger aus der Methode {\tt radius()}, welche den Radius des Trichters in Abhängigkeit von der Höhe zurückgibt:
+
+\begin{lstlisting}
+this.radius = function (h) {
+	if (h <= 1) {
+		return 4;
+	}
+	return 4 + self.r_h()(h-1);
+}
+\end{lstlisting}
+
+{\tt r\_h} ist ein {\tt knockout}-Observable, das die benutzerdefinierbare innere Funktion speichert.
+
+\subsection{{\tt OutflowDecoder}}
+
+Diese Klasse repräsentiert den Decoder, welcher den Ausfluss aus dem Trichter analysiert und daraus den Einfluss wieder herstellt. Die Analyse passiert folgendermassen:
+
+\begin{lstlisting}
+this.report = function (x, v) {
+	
+	var h = v > 0 ? v * v / 2.0 / 9.81 : 0;
+	var V = self.integrator.integrate(0, 0, self.funnel.radius, h) * 2;
+
+	var dV = V - self.prevV;
+	var dVo = self.prevv * self.funnel.radius(0) * 2 * dt;
+	var dVi = dV + dVo;
+		
+	/* [...] */
+		
+	var bit = dVi > 90.0;
+	self.prevV = V;
+	self.prevv = v;
+
+	/* [...] */
+}
+\end{lstlisting}
+
+Im Falle von Semantik in Form von Text muss noch der Text aus der binären Repräsentation wiederhergestellt werden:
+
+\begin{lstlisting}
+this.report = function (x, v) {
+	
+	/* [...] */
+
+	self.currentByte = ((self.currentByte << 1) + bit) & 255;
+	var ch = self.isPrintable(self.currentByte) ? String.fromCharCode(self.currentByte) : "\u00A0";
+	var newText = self.plainText[x % 8]() + ch;
+	if (newText.length > 100) {
+		newText = newText.substr(newText.length - 100, 100);
+	}
+
+	/* [...] */
+
+	self.plainText[x % 8](newText);
+}
+\end{lstlisting}
+
+{\tt plainText[]} enthält acht {\tt knockout}-Observables mit Text. Dies ist nötig, weil der Decoder nicht weiss, in welchem Zeitschritt die Übertragung begonnen hat, und es deswegen acht verschiedene Möglichkeiten gibt, den Bitstrom zu Bytes zusammenzusetzen.
+
+Trotzdem macht natürlich nur eine dieser acht Textsequenzen Sinn. Welche das ist, versucht die eingebaute Gibberish Detection zu erkennen:
+
+\begin{lstlisting}
+this.report = function (x, v) {
+	
+	/* [...] */
+	for (var i = 0; i < 8; i++) {
+		self.gibberishFactors[i] *= 0.99;
+	}
+
+	self.gibberishFactors[x % 8] += self.isGibberish(self.currentByte) ? 0.0 : 0.125;
+		
+	var minIndex = self.minGibberishIndex();
+	var minGibberish = self.gibberishFactors[minIndex];
+	for (var i = 0; i < 8; i++) {
+		if (self.gibberishFactors[i] > minGibberish) {
+			minGibberish = self.gibberishFactors[i];
+			minIndex = i;
+		}
+	}
+	self.minGibberishIndex(minIndex);
+
+	/* [...] */
+
+}
+\end{lstlisting}
+
+Die Gibberish Detection hält für jede der acht Sequenzen einem numerischen Wert vor, der sich um 0.125 erhöht, wenn an die Sequenz ein druckbares Zeichen angefügt wird. Vorgängig wird jeweils der Wert für alle Sequenzen um ein Prozent verringert -- dies führt dazu, dass neue Übertragungen einigermassen unabhängig von der jeweils vorhergehenden analysiert werden können.
+
+Die verwendeten Werte sind empirisch, scheinen sich aber im Praxiseinsatz zu bewähren.
 
 \chapter{Schlussfolgerungen}
 
