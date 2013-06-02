@@ -28,7 +28,7 @@ function ShapeDecoder(dt, displays) {
 			self.y.push(r);
 			self.yr.push(r-4);
 			
-			if (self.x.length > 1000) {
+			if (self.x.length > 5000) {
 				self.x.shift();
 				self.y.shift();
 				self.yr.shift();
@@ -88,9 +88,9 @@ function ShapeDecoder(dt, displays) {
 	this.guesses = [
 		new Guess(LinearRegression.Polynomial([3, 2, 1, 0]), "blue"),
 		new Guess(LinearRegression.Polynomial([3, 2]), "orange"),
-		new Guess(LinearRegression.Polynomial([2, 1, 0]), "green"),
-		new Guess(LinearRegression.Polynomial([1, 0]), "yellow"),
-		new Guess(LinearRegression.Root(), "purple")
+		new Guess(LinearRegression.Polynomial([2, 1]), "green"),
+		new Guess(LinearRegression.Polynomial([1]), "yellow"),
+		new Guess(LinearRegression.Polynomial([0.5]), "purple")
 	];
 	
 	function Guess(mode, color) {
@@ -100,8 +100,9 @@ function ShapeDecoder(dt, displays) {
 		this.mode = mode;
 		this.x = ko.observable(null);
 		this.func = null;
+		this.residual = ko.observable(null);
 		this.name = ko.computed(function () {
-			return sself.mode.describe(sself.x());
+			return "y = " + sself.mode.describe(sself.x()) + (sself.x() != null ? ", ║R║<sub>2</sub> = " + (sself.residual() ? sself.residual().toFixed(2) : "?") + "]" : "");
 		});
 		this.color = color;
 		
@@ -113,6 +114,7 @@ function ShapeDecoder(dt, displays) {
 			var res = reg.calculate(self.x, self.yr, self.guesses[i].mode);
 			self.guesses[i].func = res.func;
 			self.guesses[i].x(res.x);
+			self.guesses[i].residual(res.residual);
 		}
 	}
 	

@@ -11,10 +11,12 @@ function LinearRegression() {
 		var b = mode.getB(v);
 		var Qb = self.transformB(b, vs, mode.coeffs);
 		var x = self.solve(Qb, R, mode.coeffs);
+		var res = self.getResidual(Qb, x);
 				
 		return {
 			x: x,
-			func: mode.getFunction(x)
+			func: mode.getFunction(x),
+			residual: res
 		};
 		
 	}
@@ -112,7 +114,7 @@ function LinearRegression() {
 		}
 		return s;
 	}
-	
+		
 	this.getLowerRight = function (M) {
 		var N = [];
 		for (var i = 1; i < M.length; i++) {
@@ -123,13 +125,19 @@ function LinearRegression() {
 		}
 		return N;
 	}
-	
+		
+	this.getResidual = function (Qb, x) {
+		var r = [];
+		for (var i = x.length; i < Qb.length; i++) {
+			r.push(Qb[i]);
+		}
+		return self.norm(r);
+	}
+
 }
 
-LinearRegression.Root = function() {
+/*LinearRegression.Root = function() {
 	
-	// y = sqrt(a*x)
-	// y^2 = a*x
 	return {
 		
 		getA: function(u) {
@@ -153,7 +161,7 @@ LinearRegression.Root = function() {
 				return Math.sqrt(u * x[0]);
 			}
 		},
-		
+				
 		describe: function (x) {
 			return "sqrt(" + (x ? Math.sqrt(x[0]).toFixed(7) : "α") + "x)";
 		},
@@ -162,7 +170,7 @@ LinearRegression.Root = function() {
 		
 	}
 	
-};
+};*/
 
 LinearRegression.Polynomial = function (exponents) {
 			
@@ -186,7 +194,7 @@ LinearRegression.Polynomial = function (exponents) {
 			}
 			return b;
 		},
-		
+				
 		getFunction: function (x) {
 			var fs = $.map(x, function (xi, i) {
 				return function (u) {
