@@ -104,7 +104,7 @@
 									<input type="checkbox" data-bind="checked: displays.analyze" />Analyze?								
 									<div style="margin-left: 10px;" data-bind="visible: displays.analyze">
 										<!-- ko foreach: shapeDecoder.guesses -->
-										<span data-bind="html: name, style: {color: color}"></span><br/>
+										<span data-bind="html: name, style: {color: displayColor}"></span><br/>
 										<!-- /ko -->
 									</div>
 								</td>

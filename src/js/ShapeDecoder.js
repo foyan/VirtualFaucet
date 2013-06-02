@@ -64,7 +64,8 @@ function ShapeDecoder(dt, displays) {
 		for (var g = 0; g < self.guesses.length; g++) {
 			var guess = self.guesses[g];
 			if (guess.func) {
-				self.context.strokeStyle = guess.color;
+				self.context.strokeStyle = guess.displayColor();
+				self.context.lineWidth = guess.isLeader() ? 2 : 1;
 				
 				self.context.beginPath();
 				self.context.moveTo(self.canvasWidth / 2 - guess.func(self.canvasHeight)-4, 0);
@@ -86,7 +87,7 @@ function ShapeDecoder(dt, displays) {
 	}
 	
 	this.guesses = [
-		new Guess(LinearRegression.Polynomial([3, 2, 1, 0]), "blue"),
+		new Guess(LinearRegression.Polynomial([4, 3, 2, 1, 0]), "blue"),
 		new Guess(LinearRegression.Polynomial([3, 2]), "orange"),
 		new Guess(LinearRegression.Polynomial([2, 1]), "green"),
 		new Guess(LinearRegression.Polynomial([1]), "yellow"),
@@ -105,16 +106,34 @@ function ShapeDecoder(dt, displays) {
 			return "y = " + sself.mode.describe(sself.x()) + (sself.x() != null ? ", ║R║<sub>2</sub> = " + (sself.residual() ? sself.residual().toFixed(2) : "?") + "]" : "");
 		});
 		this.color = color;
+		this.isLeader = ko.observable(false);
+		
+		this.displayColor = ko.computed(function () {
+			return sself.isLeader() ? sself.color : "#333333";
+		});
 		
 	}
 		
 	this.guess = function () {
 		var reg = new LinearRegression();
+		
+		var minR = 99999999;
+		var minRguess = -1;
 		for (var i = 0; i < self.guesses.length; i++) {
 			var res = reg.calculate(self.x, self.yr, self.guesses[i].mode);
 			self.guesses[i].func = res.func;
 			self.guesses[i].x(res.x);
 			self.guesses[i].residual(res.residual);
+			self.guesses[i].isLeader(false);
+			
+			if (res.residual < minR) {
+				minRguess = i;
+				minR = res.residual;
+			}
+		}
+		
+		if (minRguess != -1) {
+			self.guesses[minRguess].isLeader(true);
 		}
 	}
 	
