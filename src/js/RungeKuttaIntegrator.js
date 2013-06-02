@@ -7,8 +7,6 @@ function RungeKuttaIntegrator() {
 		h = h || 0.01;
 		tol = tol || 0.00001;
 
-		//console.log("entering bogackiShampine(y0="+ y0 + ", t0="+t0+", end=" + end + ", h=" + h + ", tol=" + tol +", breakonY=" + breakonY +")" );
-
 		var tn = t0;
 		var yn = y0;
 		var tnm1 = t0;
@@ -51,24 +49,19 @@ function RungeKuttaIntegrator() {
 			tn = tn2;
 		}
 		
-		//console.log("exiting bogackiShampine(), n="+n);
 		var ret = {
 			y: yn,
 			ym1: ynm1,
 			t: tn,
 			tm1: tnm1
 		};
-		
-		//console.log(ret);
-		
+				
 		return ret;
 		
 	}
 	
 	this.rungeKutta4 = function (y0, t0, y, tend, factor) {
 		
-		//console.log("entering rungeKutta4(y0="+ y0 + ", t0="+t0+", tend=" + tend + ", factor=" +factor +")" );
-
 		factor = factor || 0.001;
 		var h = (tend - t0) * factor;
 		var tn = t0;
@@ -93,8 +86,6 @@ function RungeKuttaIntegrator() {
 			n++;
 		}
 		
-		//console.log("exiting rungeKutta4(), n="+n);
-
 		return {
 			y: yn,
 			ym1 : ynm1,

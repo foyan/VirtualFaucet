@@ -365,23 +365,77 @@ this.guess = function () {
 
 \subsection{{\tt LinearRegression}}
 
-Diese Klasse nähert eine Reihe von Messpunkten durch eine Funktion mit linearen Koeffizienten an. Das tut sie, indem sie aus den Messpunkten $(u_1, v_1), (u_2, v_2), \dots, (u_n, v_n)$ sowie den unbekannten Koeffizienten $x = \{x_1, x_2, \dots\}$ das überdeterminierte orthogonale Gleichungssystem
+Diese Klasse nähert eine Reihe von Messpunkten durch eine Funktion mit linearen Koeffizienten an. Das tut sie, indem sie aus den Messpunkten $(u_1, v_1), (u_2, v_2), \dots, (u_n, v_n)$ sowie den unbekannten Koeffizienten $x^* = \{x^*_1, x^*_2, \dots\}$ das Ausgleichsproblem
+
 \[
-A^TAx = A^Tb
-\]
-mit
-\[
-b = \{v_1, v_2, \dots\}
-\] und \[
-A = \begin{bmatrix}
-f_{1}(u_1) & f_{2}(u_1) & \dots & f_m(u_1) \\
-f_1(u_2) & f_2(u_2) & \dots & f_m(u_2) \\
-\vdots & \vdots & \ddots & \vdots \\
-f_1(u_n) & f_2(u_n) & \dots & f_m(u_n)
-\end{bmatrix}
+||Ax^* - b||_2 = \min_{x \in \mathbb{R}^n} ||Ax - b||_2
 \]
 
-ableitet. Durch eine $QR$-Zerlegung von $A^TA$ mit einer Householder-Transformation (\cite{wiki:householder})
+%
+%\[
+%A^TAx^* = A^Tb
+%\]
+%mit
+%\[
+%b = \{v_1, v_2, \dots\}
+%\] und \[
+%A = \begin{bmatrix}
+%f_{1}(u_1) & f_{2}(u_1) & \dots & f_m(u_1) \\
+%f_1(u_2) & f_2(u_2) & \dots & f_m(u_2) \\
+%\vdots & \vdots & \ddots & \vdots \\
+%f_1(u_n) & f_2(u_n) & \dots & f_m(u_n)
+%\end{bmatrix}
+%\]
+
+ableitet \cite{massjung}. Durch eine $QR$-Zerlegung von $A$ mittels Householder-Transformation (\cite{wiki:householder}) kann das äquivalente Ausgleichsproblem 
+
+\[
+||QAx^* - Qb||_2 = \min_{x \in \mathbb{R}^n} ||Ax - b||_2
+\]
+
+einfach gelöst werden, weil $R$ eine obere Dreiecksgestalt hat. Die Residuen werden von den durch die Überdeterminierung überflüssigen Komponenten von $Qb$ repräsentiert.
+
+Die implementierte Methode verdeutlicht das Vorgehen:
+
+\begin{lstlisting}
+this.calculate = function (u, v, mode) {
+	
+	var vs = [];
+		
+	var A = mode.getA(u);
+	var R = self.getR(A, vs);
+	var b = mode.getB(v);
+	var Qb = self.transformB(b, vs, mode.coeffs);
+	var x = self.solve(Qb, R, mode.coeffs);
+	var res = self.getResidual(Qb, x);
+				
+	return {
+		x: x,
+		func: mode.getFunction(x),
+		residual: res
+	};
+		
+}
+\end{lstlisting}
+
+\subsection{{\tt RungeKuttaIntegrator}}
+
+Zur Berechnung der anfallenden Integrale implementiert die Klasse {\tt RungeKuttaIntegrator} das Bogacki-Shampine-Verfahren (\cite{wiki:bogackiShampine}). Es handelt sich dabei um ein Verfahren aus der Familie der expliziten Runge-Kutta-Verfahren, welches die Ordnung 3 hat und zur automatischen Steuerung der Schrittweite $h$ ein eingebettetes Verfahren der Ordnung 2 aufweist.
+
+Derlei Verfahren mit Schrittweitensteuerung sind im Allgemeinen massiv effizienter als Verfahren mit fester Schrittweite, haben allerdings das Problem, dass die genaue Berechnung eines Integrals zwischen zwei Grenzen nicht möglich ist.
+
+Aus diesem Grund kombiniert diese Klasse die beiden Verfahren: Es wird mittels Bogacki-Shampine möglichst nahe an die obere Grenze heranintegriert. Danach wird für das restliche Intervall das klassische Runge-Kutta-4-Verfahren herangezogen:
+
+\begin{lstlisting}
+this.integrate = function (y0, t0, y, tend) {
+	var r = self.bogackiShampine(y0, t0, y, tend, 0.01, 0.00001);
+	return self.rungeKutta4(r.ym1, r.tm1, y, tend).y;
+}
+\end{lstlisting}
+
+Die Berechnung der Pegelhöhe $h$ als Nullstelle der nichtlinearen Funktion $\int_0^h r(x) dx - V_h$ verlangt eigentlich nach einem passenden Verfahren. Dies ist allerdings sehr ineffizient, da die mehrfache Auswertung der Integralfunktion sehr ineffizient ist.
+
+Allerdings wissen wir, dass die Funktion  $f(h) = \int_0^h r(x) dx$ (wie jede Integralfunktion) monoton steigend sein muss. Ausserdem wissen wir, dass sie sogar streng monoton steigend sein muss -- ansonsten wäre r(x) an einer Stelle $x  \ne 0$ gleich null, was nicht möglich ist (denn dann wäre der Trichter nicht mehr durchlässig).
 
 \chapter{Schlussfolgerungen}
 
