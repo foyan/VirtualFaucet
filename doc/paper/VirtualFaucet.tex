@@ -331,6 +331,58 @@ Die Gibberish Detection hält für jede der acht Sequenzen einem numerischen Wer
 
 Die verwendeten Werte sind empirisch, scheinen sich aber im Praxiseinsatz zu bewähren.
 
+\subsection{{\tt ShapeDecoder}}
+
+Diese Klasse hat die Aufgabe, aus gegebener Eingabe und gegebener Ausgabe die Syntax wiederherzustellen -- sprich die Radiusfunktion des Trichters.
+
+Dies tut sie, indem sie lineare Regression für verschiedene Funktions-Skelette durchführen lässt und dann dasjenige mit dem kleinsten normierten Residuum selektiert:
+
+\begin{lstlisting}
+this.guess = function () {
+	var reg = new LinearRegression();
+		
+	var minR = 99999999;
+	var minRguess = -1;
+	for (var i = 0; i < self.guesses.length; i++) {
+		var res = reg.calculate(self.x, self.yr, self.guesses[i].mode);
+		self.guesses[i].func = res.func;
+		self.guesses[i].x(res.x);
+		self.guesses[i].residual(res.residual);
+		self.guesses[i].isLeader(false);
+			
+		if (res.residual < minR) {
+			minRguess = i;
+			minR = res.residual;
+		}
+	}
+		
+	if (minRguess != -1) {
+		self.guesses[minRguess].isLeader(true);
+	}
+}
+
+\end{lstlisting}
+
+\subsection{{\tt LinearRegression}}
+
+Diese Klasse nähert eine Reihe von Messpunkten durch eine Funktion mit linearen Koeffizienten an. Das tut sie, indem sie aus den Messpunkten $(u_1, v_1), (u_2, v_2), \dots, (u_n, v_n)$ sowie den unbekannten Koeffizienten $x = \{x_1, x_2, \dots\}$ das überdeterminierte orthogonale Gleichungssystem
+\[
+A^TAx = A^Tb
+\]
+mit
+\[
+b = \{v_1, v_2, \dots\}
+\] und \[
+A = \begin{bmatrix}
+f_{1}(u_1) & f_{2}(u_1) & \dots & f_m(u_1) \\
+f_1(u_2) & f_2(u_2) & \dots & f_m(u_2) \\
+\vdots & \vdots & \ddots & \vdots \\
+f_1(u_n) & f_2(u_n) & \dots & f_m(u_n)
+\end{bmatrix}
+\]
+
+ableitet. Durch eine $QR$-Zerlegung von $A^TA$ mit einer Householder-Transformation (\cite{wiki:householder})
+
 \chapter{Schlussfolgerungen}
 
 \bibliography{biblio}
