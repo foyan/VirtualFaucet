@@ -123,9 +123,70 @@ Der Autor bedankt sich bei den Dozenten Albert Heuberger und Beat Seeliger für 
 
 \chapter{Syntax und Semantik in der Systemtheorie}
 
+\chapter{Illustrierendes System}
+
+\section{Setup}
+
+Um die Wechselwirkung von Syntax und Semantik an einem physikalischen System illustrieren und simulieren zu können, wird die folgende Versuchsanordnung angenommen. Man beachte, dass wir uns mit unserer Anordnung im Flächenland befinden; dies bedeutet, dass  alle involvierten Volumina zweidimensional als Flächen berechnet werden, in der Realität aber Rotationskörper wären.
+
+\begin{itemize}
+\item Ein Wasserhahn, der mit konstantem Ausflussvolumen entweder läuft oder nicht:
+\[
+	\Delta V_{\text{out}} \in \{ 0, 200 \}
+\]
+\item Ein Trichter, dessen Wand durch die Radiusfunktion (abhängig von der Höhe $h$)
+\[
+	r(h) = \begin{cases}
+		4 & (h = 0) \\
+		r'(h) + 4 & (h > 0)
+	\end{cases}
+\]
+mit 
+\[
+	r' : \mathbb{R} \rightarrow \mathbb{R}
+\]
+beschrieben wird und der eine untere Trichteröffnung von $r(0) = 4$ besitzt.
+
+Da das Volumen des Wassers innerhalb des Trichters bei bekannter Pegelhöhe der Integralfunktion
+\[
+V(h) = 2\cdot \int\limits_{0}^{h} r(x) dx
+\]
+entspricht, ist die Funktion der Pegelhöhe die Lösung $h$ der folgenden Gleichung:
+\[
+\int\limits_{0}^{h} r(x) dx - \frac 1 2 \cdot V_h = 0
+\]
+
+Die Berechnung der Ausflussgeschwindigkeit $v$ des Wassers aus dem Trichter ergibt sich gemäss dem Torricellischen Gesetz \cite{wiki:ausflussgeschwindigkeit}:
+\[
+v = \sqrt{2gh}
+\]
+
+\item Eine Messvorrichtung, welche die momentane Ausflussgeschwindigkeit messen kann.
+
+\end{itemize}
+
+\section{Ermittlung der Ausgabe-Semantik}
+
+Bei gegebener Eingabe und bekannter Syntax ist die Ermittlung der Ausgabe trivial, denn sie entspricht direkt der gemessenen Ausflussgeschwindigkeit.
+
+\section{Ermittlung der Eingabe-Semantik}
+
+Bei gegebener Ausgabe und bekannter Syntax gestaltet sich die Ermittlung der Eingabe folgendermassen:
+
+\begin{enumerate}
+\item Ermittle 
+\end{enumerate}
+
+\section{Ermittlung der Syntax}
+
 \chapter{Bemerkungen zur Implementation}
 
+\section{Umgebung}
+
 \chapter{Schlussfolgerungen}
+
+\bibliography{biblio}
+\bibliographystyle{plain}
 
 
 \end{document}
