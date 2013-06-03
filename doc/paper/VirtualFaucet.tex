@@ -433,9 +433,52 @@ this.integrate = function (y0, t0, y, tend) {
 }
 \end{lstlisting}
 
-Die Berechnung der Pegelhöhe $h$ als Nullstelle der nichtlinearen Funktion $\int_0^h r(x) dx - V_h$ verlangt eigentlich nach einem passenden Verfahren. Dies ist allerdings sehr ineffizient, da die mehrfache Auswertung der Integralfunktion sehr ineffizient ist.
+Die Berechnung der Pegelhöhe $h$ als Nullstelle der nichtlinearen Funktion $f(h) = \int_0^h r(x) dx - V_h$ verlangt eigentlich nach einem passenden Verfahren. Dies ist allerdings sehr ineffizient, da die mehrfache Auswertung der Integralfunktion sehr ineffizient ist.
 
-Allerdings wissen wir, dass die Funktion  $f(h) = \int_0^h r(x) dx$ (wie jede Integralfunktion) monoton steigend sein muss. Ausserdem wissen wir, dass sie sogar streng monoton steigend sein muss -- ansonsten wäre r(x) an einer Stelle $x  \ne 0$ gleich null, was nicht möglich ist (denn dann wäre der Trichter nicht mehr durchlässig).
+Allerdings wissen wir, dass die Funktion  $f(h) = \int_0^h r(x) dx$ (wie jede Integralfunktion) monoton steigend sein muss. Ausserdem wissen wir, dass sie sogar streng monoton steigend sein muss -- ansonsten gäbe es ein $x^*$, sodass $r(x^*) = 0$; dies ist nicht möglich (denn dann wäre der Trichter nicht mehr durchlässig).
+
+Durch dieses zusätzliche Problemwissen ist es uns möglich, die Nullstelle der Funktion wie folgt anzunähern:
+\begin{enumerate}
+\item Führe eine Bogacki-Shampine-Integration wie oben durch. Ändere aber die Abbruchbedingung dahingehend, dass anstelle auf $\tt{t_{end}}$ auf das bekannte Endresultat $\tt{y_{end}}$ geprüft wird:
+
+\begin{lstlisting}
+this.bogackiShampine = function (y0, t0, y, end, h, tol, breakonY) {
+
+	/* [...] */
+		
+	while ((!breakonY && tn < end) || (breakonY && yn < end)) {
+		/* [...] */
+	}
+
+	/* [...] */
+}
+\end{lstlisting}
+
+\item Das obige Problem mit den ungenauen Grenzen gilt natürlich auch für die inverse Integrationsmethode; das erhaltene $\tt{t_{end}}$ ist also falsch und insbesondere zu tief. Aus diesem Grund nähern wir uns mit Bisektion der Nullstelle an, indem wir iterativ das Runge-Kutta-Verfahren mit Schrittweite $h = 0.5\cdot(y_\text{end} - y_0)$ durchführen:
+
+\begin{lstlisting}
+this.integrateReverse = function (y0, t0, y, yend) {
+	var r = self.bogackiShampine(y0, t0, y, yend, 0.01,0.00001, true);
+		
+	var t0 = r.tm1;
+	var tend = r.t;
+	var y0 = r.ym1;
+		
+	for (var i = 0; i < 5; i++) {
+		var r2 = self.rungeKutta4(y0, t0, y, tend, 0.5);
+		if (r2.ym1 > yend) {
+			tend = r2.tm1;
+		} else {
+			t0 = r2.tm1;
+			y0 = r2.ym1;
+		}
+	}
+
+	return t0;
+}
+\end{lstlisting}
+
+\end{enumerate}
 
 \chapter{Schlussfolgerungen}
 

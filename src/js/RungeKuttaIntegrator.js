@@ -108,7 +108,7 @@ function RungeKuttaIntegrator() {
 		var y0 = r.ym1;
 		
 		for (var i = 0; i < 5; i++) {
-			r2 = self.rungeKutta4(y0, t0, y, tend, 0.5);
+			var r2 = self.rungeKutta4(y0, t0, y, tend, 0.5);
 			if (r2.ym1 > yend) {
 				tend = r2.tm1;
 			} else {
