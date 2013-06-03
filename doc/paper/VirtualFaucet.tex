@@ -102,7 +102,7 @@
 \newtheorem{definition}{Definition}
 \newtheorem*{bemerkung}{Bemerkung}
 
-\title{Systemtheorie und ein virtueller Trichter}
+\title{Systeme, Syntax, Semantik und ein virtueller Trichter}
 \subtitle{Seminar Syntax und Semantik \\ ZHAW, Zürich}
 \author{Florian Lüthi\footnote{\url{luethifl@students.zhaw.ch}}}
 %\date{ZHAW (Zürich), 5. Juni 2013} % Activate to display a given date or no date (if empty),
@@ -115,26 +115,55 @@
 
 \chapter{Einführung}
 
-Diese Seminararbeit ist Teil des Seminars {\it{Syntax und Semantik}} an der ZHAW Zürich im Frühlingssemester 2013. Die Arbeit beschäftigt sich mit der allgemeinen Abgrenzung der Begriffe {\it Syntax} und {\it Semantik} in der Systemtheorie für physikalische Systeme. Das dazugehörige Programm {\tt VirtualFauceteering} soll die Thematik beispielhaft an einem einfachen System, bestehend aus einem Wasserhahn und einem Trichter, illustrieren.
+Diese Seminararbeit ist Teil des Seminars {\it{Syntax und Semantik}} an der ZHAW Zürich im Frühlingssemester 2013. Die Arbeit beschäftigt sich mit der allgemeinen Wechselwirkung der Begriffe {\it Syntax} und {\it Semantik} in der Systemtheorie für physikalische Systeme. Das dazugehörige Programm {\tt VirtualFauceteering} soll die Thematik beispielhaft an einem einfachen System bestehend aus einem Wasserhahn und einem Trichter illustrieren.
+
+Dieses Dokument versteht sich als sinnvolle Ergänzung zum erwähnten Programm.
 
 {\tt VirtualFauceteering} wie auch dieses Dokument können von \url{https://github.com/foyan/VirtualFaucet} bezogen werden.
 
-Der Autor bedankt sich bei den Dozenten Albert Heuberger und Beat Seeliger für die Kursführung.
+Der Autor bedankt sich bei den Dozenten Albert Heuberger und Beat Seeliger für die Durchführung des Seminars.
 
 \chapter{Syntax und Semantik in der Systemtheorie}
+
+Ein System ist ein System, wenn es folgende Eigenschaften erfüllt \cite{bossel}:
+\begin{itemize}
+\item Es erfüllt eine bestimmte Funktion und hat darum einen bestimmten Zweck.
+\item Es besitzt eine charakteristische Anordnung von Elementen und eine charakteristische Struktur. Diese beiden Eigenschaften beschreiben seine Funktion, seinen Zweck und seine Identität vollständig.
+\item Wenn ein Element aus dem System entfernt wird oder seine Struktur verändert wird, wird damit seine Integrität zerstört, und es kann seinen Zweck nicht mehr erfüllen (obwohl es dadurch vielleicht zu einem anderen System wird und darum einen anderen Zweck erfüllen könnte).
+\end{itemize}
+
+%Des weiteren hat ein System Systemgrenzen -- obwohl diese meistens nicht einfach zu ziehen sind. Das System kommuniziert mit seiner Umwelt über Ein- und Ausgaben.
+
+In der Theorie wird von dynamischen Systemen gesprochen, wenn ihr eigener Zustand abhängig ist von der Summe der Eingaben über die Zeit, ansonsten von statischen Systemen. Tatsächlich ist bei genauerer Betrachtung aber jedes real existierende System ein dynamisches System, weil sich sein Zustand durch die natürliche Alterung, welche jedem existierendem Material innewohnt, grundsätzlich ändert und darum abhängig von der Zeit ist.
+
+Der komplette (dynamische oder statische) Zustand eines Systems wird durch unabhängige Zustandsvariablen definiert. Die Anzahl der Zustandsvariablen definiert die Dimension des Systems
+
+Das durch seine Umwelt beobachtbare Verhalten eines Systems (Ausgabe) kann nur von zwei Dingen (oder deren Kombination) beeinflusst werden:
+\begin{enumerate}
+\item Von den direkten Einflüssen der Umwelt (Eingabe)
+\item Oder seinem eigenen Zustand.
+\end{enumerate}
+
+Welcher Teil seines eigenen Zustandes (wenn überhaupt) beobachtbar ist, hängt davon ab, ob derjenige Teil als Verhalten an die Umwelt des Systems abgegeben wird.
+
+Die soziologische Systemtheorie \cite{wiki:semantik} versteht Semantik als den gesamten Wissensvorrat einer Gesellschaft. Dies passt auch in den Kontext der technischen Systemtheorie, wenn der Begriff Semantik als das beobachtete und akzeptierte Verhalten (Ausgabe) eines Systems betrachtet wird oder als dasselbe seines Komplementärsystems (sprich der Umwelt oder seiner Eingabe).
+
+Die Syntax eines Sytems hingegen kann als verstecktes Regelwerk innerhalb des Systems gedeutet werden, welches es entweder zu entdecken oder zu modellieren gilt. 
 
 \chapter{Illustrierendes System}
 
 \section{Setup}
 
-Um die Wechselwirkung von Syntax und Semantik an einem physikalischen System illustrieren und simulieren zu können, wird die folgende Versuchsanordnung angenommen. Man beachte, dass wir uns mit unserer Anordnung im Flächenland befinden; dies bedeutet, dass  alle involvierten Volumina zweidimensional als Flächen berechnet werden, in der Realität aber Rotationskörper wären.
+Um die Wechselwirkung von Syntax und Semantik an einem physikalischen System illustrieren und simulieren zu können, nehmen wir die folgende Versuchsanordung an. Man beachte, dass wir uns mit unserer Anordnung im Flächenland befinden; dies bedeutet, dass  alle involvierten Volumina zweidimensional als Flächen berechnet werden, in der Realität aber Rotationskörper wären.
+
+Wir benötigen:
 
 \begin{itemize}
-\item Ein Wasserhahn, der mit konstantem Ausflussvolumen entweder läuft oder nicht:
+\item Einen Wasserhahn, der mit konstantem Ausflussvolumen entweder läuft oder nicht:
 \[
 	\Delta V_{\text{out}} \in \{ 0, 200 \}
 \]
-\item Ein Trichter, dessen Wand durch die Radiusfunktion (abhängig von der Höhe $h$)
+\item Einen Trichter, dessen Wand durch die Radiusfunktion (abhängig von der Höhe $h$)
 \[
 	r(h) = \begin{cases}
 		4 & (h = 0) \\
@@ -164,6 +193,10 @@ v = \sqrt{2gh}
 \item Eine Messvorrichtung, welche die momentane Ausflussgeschwindigkeit messen kann.
 
 \end{itemize}
+
+Die Systemgrenzen ziehen wir rund um den Trichter herum. Damit haben wir ein eindimensionales System, welches eine einzige Zustandsvariable besitzt. Diese kann entweder als das Volumen des im Trichter befindlichen Wassers oder aber dessen Höhe aufgefasst werden -- da das eine vom anderen abhängig ist (und von nichts sonst), ist es aber unwesentlich welches man auswählt. Wesentlich hingegen ist, nicht beide auszuwählen, weil sonst das System überdeterminiert wäre.
+
+Der Wasserhahn repräsentiert den Umwelteinfluss (Eingabe-Semantik), und die Messvorrichtung repräsentiert das Verhalten des Systems (Ausgabe-Semantik). Die Syntax wiederum ergibt sich aus den unumstösslichen physikalischen Gesetzen sowie der Radiusfunktion $r(h)$ des Trichters. Die weitere Aufgabe dieser Arbeit (und auch des dazu implementierten Programms) wird nun sein, aus jeweils gegebenen  Grössen die unbekannte dritte zu ermitteln.
 
 \section{Ermittlung der Ausgabe-Semantik}
 
@@ -387,7 +420,7 @@ Diese Klasse nähert eine Reihe von Messpunkten durch eine Funktion mit linearen
 %\end{bmatrix}
 %\]
 
-ableitet \cite{massjung}. Durch eine $QR$-Zerlegung von $A$ mittels Householder-Transformation (\cite{wiki:householder}) kann das äquivalente Ausgleichsproblem 
+ableitet \cite{massjung}. Durch eine $QR$-Zerlegung von $A$ mittels Householder-Transformation (\cite{wiki:householder}) kann das äquivalente Ausgleichsproblem (\cite{wiki:lineareRegression})
 
 \[
 ||QAx^* - Qb||_2 = \min_{x \in \mathbb{R}^n} ||Ax - b||_2
@@ -479,8 +512,6 @@ this.integrateReverse = function (y0, t0, y, yend) {
 \end{lstlisting}
 
 \end{enumerate}
-
-\chapter{Schlussfolgerungen}
 
 \bibliography{biblio}
 \bibliographystyle{plain}
